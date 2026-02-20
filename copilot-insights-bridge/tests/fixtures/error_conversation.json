@@ -1,0 +1,93 @@
+[
+  {
+    "timestamp": "2025-01-15T13:00:00.000Z",
+    "name": "BotMessageReceived",
+    "operation_Id": "op-030",
+    "operation_ParentId": "",
+    "session_Id": "sess-jkl",
+    "customDimensions": {
+      "conversationId": "conv-004",
+      "sessionId": "sess-jkl",
+      "userId": "user-55",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "user-55",
+      "fromName": "Dave",
+      "recipientId": "bot-1",
+      "recipientName": "HelpBot",
+      "text": "Transfer me to a human agent",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T13:00:00.500Z",
+    "name": "TopicStart",
+    "operation_Id": "op-030",
+    "operation_ParentId": "",
+    "session_Id": "sess-jkl",
+    "customDimensions": {
+      "conversationId": "conv-004",
+      "sessionId": "sess-jkl",
+      "userId": "user-55",
+      "channelId": "msteams",
+      "topicName": "EscalateToAgent",
+      "topicId": "topic-escalate",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T13:00:01.000Z",
+    "name": "Action",
+    "operation_Id": "op-030",
+    "operation_ParentId": "",
+    "session_Id": "sess-jkl",
+    "customDimensions": {
+      "conversationId": "conv-004",
+      "sessionId": "sess-jkl",
+      "userId": "user-55",
+      "channelId": "msteams",
+      "topicName": "EscalateToAgent",
+      "topicId": "topic-escalate",
+      "kind": "TransferToAgent",
+      "text": "{\"queue\": \"general-support\"}",
+      "errorCodeText": "AgentTransferFailed",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T13:00:01.500Z",
+    "name": "BotMessageSend",
+    "operation_Id": "op-030",
+    "operation_ParentId": "",
+    "session_Id": "sess-jkl",
+    "customDimensions": {
+      "conversationId": "conv-004",
+      "sessionId": "sess-jkl",
+      "userId": "user-55",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "bot-1",
+      "fromName": "HelpBot",
+      "recipientId": "user-55",
+      "recipientName": "Dave",
+      "text": "I'm sorry, I wasn't able to transfer you to a human agent right now. Please try again later or call our support line.",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T13:00:02.000Z",
+    "name": "TopicEnd",
+    "operation_Id": "op-030",
+    "operation_ParentId": "",
+    "session_Id": "sess-jkl",
+    "customDimensions": {
+      "conversationId": "conv-004",
+      "sessionId": "sess-jkl",
+      "userId": "user-55",
+      "channelId": "msteams",
+      "topicName": "EscalateToAgent",
+      "topicId": "topic-escalate",
+      "designMode": "False"
+    }
+  }
+]

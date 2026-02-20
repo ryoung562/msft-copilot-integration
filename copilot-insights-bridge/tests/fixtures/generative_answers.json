@@ -1,0 +1,184 @@
+[
+  {
+    "timestamp": "2025-01-15T12:00:00.000Z",
+    "name": "BotMessageReceived",
+    "operation_Id": "op-020",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "user-99",
+      "fromName": "Carol",
+      "recipientId": "bot-1",
+      "recipientName": "HelpBot",
+      "text": "Explain the company's remote work policy",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:00:00.500Z",
+    "name": "TopicStart",
+    "operation_Id": "op-020",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "topicName": "GenerativeAnswersTopic",
+      "topicId": "topic-gen-answers",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:00:01.000Z",
+    "name": "GenerativeAnswers",
+    "operation_Id": "op-020",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "topicName": "GenerativeAnswersTopic",
+      "topicId": "topic-gen-answers",
+      "message": "Explain the company's remote work policy",
+      "result": "Our remote work policy allows employees to work from home up to 3 days per week. You need manager approval for fully remote arrangements. All remote workers must be available during core hours (10 AM - 3 PM local time). Equipment stipends of $500/year are available.",
+      "summary": "Remote work policy explanation",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:00:02.000Z",
+    "name": "BotMessageSend",
+    "operation_Id": "op-020",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "bot-1",
+      "fromName": "HelpBot",
+      "recipientId": "user-99",
+      "recipientName": "Carol",
+      "text": "Our remote work policy allows employees to work from home up to 3 days per week. You need manager approval for fully remote arrangements. All remote workers must be available during core hours (10 AM - 3 PM local time). Equipment stipends of $500/year are available.",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:00:02.500Z",
+    "name": "TopicEnd",
+    "operation_Id": "op-020",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "topicName": "GenerativeAnswersTopic",
+      "topicId": "topic-gen-answers",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:01:00.000Z",
+    "name": "BotMessageReceived",
+    "operation_Id": "op-021",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "user-99",
+      "fromName": "Carol",
+      "recipientId": "bot-1",
+      "recipientName": "HelpBot",
+      "text": "What about the equipment stipend process?",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:01:00.500Z",
+    "name": "TopicStart",
+    "operation_Id": "op-021",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "topicName": "GenerativeAnswersTopic",
+      "topicId": "topic-gen-answers-2",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:01:01.000Z",
+    "name": "GenerativeAnswers",
+    "operation_Id": "op-021",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "topicName": "GenerativeAnswersTopic",
+      "topicId": "topic-gen-answers-2",
+      "message": "What about the equipment stipend process?",
+      "result": "To claim your equipment stipend: 1) Purchase approved equipment, 2) Submit receipts through the HR portal within 30 days, 3) Reimbursement is processed in the next pay cycle. Approved items include monitors, keyboards, chairs, and desk accessories.",
+      "summary": "Equipment stipend process details",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:01:01.500Z",
+    "name": "BotMessageSend",
+    "operation_Id": "op-021",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "bot-1",
+      "fromName": "HelpBot",
+      "recipientId": "user-99",
+      "recipientName": "Carol",
+      "text": "To claim your equipment stipend: 1) Purchase approved equipment, 2) Submit receipts through the HR portal within 30 days, 3) Reimbursement is processed in the next pay cycle. Approved items include monitors, keyboards, chairs, and desk accessories.",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T12:01:02.000Z",
+    "name": "TopicEnd",
+    "operation_Id": "op-021",
+    "operation_ParentId": "",
+    "session_Id": "sess-ghi",
+    "customDimensions": {
+      "conversationId": "conv-003",
+      "sessionId": "sess-ghi",
+      "userId": "user-99",
+      "channelId": "msteams",
+      "topicName": "GenerativeAnswersTopic",
+      "topicId": "topic-gen-answers-2",
+      "designMode": "False"
+    }
+  }
+]

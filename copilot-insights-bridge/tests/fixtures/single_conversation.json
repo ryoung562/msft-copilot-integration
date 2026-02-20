@@ -1,0 +1,93 @@
+[
+  {
+    "timestamp": "2025-01-15T10:00:00.000Z",
+    "name": "BotMessageReceived",
+    "operation_Id": "op-001",
+    "operation_ParentId": "",
+    "session_Id": "sess-abc",
+    "customDimensions": {
+      "conversationId": "conv-001",
+      "sessionId": "sess-abc",
+      "userId": "user-42",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "user-42",
+      "fromName": "Alice",
+      "recipientId": "bot-1",
+      "recipientName": "HelpBot",
+      "text": "How do I reset my password?",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T10:00:00.500Z",
+    "name": "TopicStart",
+    "operation_Id": "op-001",
+    "operation_ParentId": "",
+    "session_Id": "sess-abc",
+    "customDimensions": {
+      "conversationId": "conv-001",
+      "sessionId": "sess-abc",
+      "userId": "user-42",
+      "channelId": "msteams",
+      "topicName": "PasswordReset",
+      "topicId": "topic-pw-reset",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T10:00:01.000Z",
+    "name": "GenerativeAnswers",
+    "operation_Id": "op-001",
+    "operation_ParentId": "",
+    "session_Id": "sess-abc",
+    "customDimensions": {
+      "conversationId": "conv-001",
+      "sessionId": "sess-abc",
+      "userId": "user-42",
+      "channelId": "msteams",
+      "topicName": "PasswordReset",
+      "topicId": "topic-pw-reset",
+      "message": "How do I reset my password?",
+      "result": "To reset your password, go to Settings > Security > Change Password. You can also use the self-service portal at https://reset.example.com.",
+      "summary": "Password reset instructions provided",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T10:00:01.500Z",
+    "name": "BotMessageSend",
+    "operation_Id": "op-001",
+    "operation_ParentId": "",
+    "session_Id": "sess-abc",
+    "customDimensions": {
+      "conversationId": "conv-001",
+      "sessionId": "sess-abc",
+      "userId": "user-42",
+      "channelId": "msteams",
+      "activityType": "message",
+      "fromId": "bot-1",
+      "fromName": "HelpBot",
+      "recipientId": "user-42",
+      "recipientName": "Alice",
+      "text": "To reset your password, go to Settings > Security > Change Password. You can also use the self-service portal at https://reset.example.com.",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T10:00:02.000Z",
+    "name": "TopicEnd",
+    "operation_Id": "op-001",
+    "operation_ParentId": "",
+    "session_Id": "sess-abc",
+    "customDimensions": {
+      "conversationId": "conv-001",
+      "sessionId": "sess-abc",
+      "userId": "user-42",
+      "channelId": "msteams",
+      "topicName": "PasswordReset",
+      "topicId": "topic-pw-reset",
+      "designMode": "False"
+    }
+  }
+]

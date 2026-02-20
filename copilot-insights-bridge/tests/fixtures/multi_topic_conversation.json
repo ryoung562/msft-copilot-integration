@@ -1,0 +1,182 @@
+[
+  {
+    "timestamp": "2025-01-15T11:00:00.000Z",
+    "name": "BotMessageReceived",
+    "operation_Id": "op-010",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "activityType": "message",
+      "fromId": "user-77",
+      "fromName": "Bob",
+      "recipientId": "bot-1",
+      "recipientName": "HelpBot",
+      "text": "What are my upcoming meetings?",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:00:00.500Z",
+    "name": "TopicStart",
+    "operation_Id": "op-010",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "topicName": "CalendarLookup",
+      "topicId": "topic-calendar",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:00:01.000Z",
+    "name": "Action",
+    "operation_Id": "op-010",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "topicName": "CalendarLookup",
+      "topicId": "topic-calendar",
+      "kind": "GetCalendarEvents",
+      "text": "{\"userId\": \"user-77\", \"range\": \"today\"}",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:00:02.000Z",
+    "name": "BotMessageSend",
+    "operation_Id": "op-010",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "activityType": "message",
+      "fromId": "bot-1",
+      "fromName": "HelpBot",
+      "recipientId": "user-77",
+      "recipientName": "Bob",
+      "text": "You have 2 meetings today: 1) Team Standup at 9:30 AM, 2) Design Review at 2:00 PM.",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:00:02.500Z",
+    "name": "TopicEnd",
+    "operation_Id": "op-010",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "topicName": "CalendarLookup",
+      "topicId": "topic-calendar",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:01:00.000Z",
+    "name": "BotMessageReceived",
+    "operation_Id": "op-011",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "activityType": "message",
+      "fromId": "user-77",
+      "fromName": "Bob",
+      "recipientId": "bot-1",
+      "recipientName": "HelpBot",
+      "text": "Book a meeting room for the design review",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:01:00.500Z",
+    "name": "TopicStart",
+    "operation_Id": "op-011",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "topicName": "RoomBooking",
+      "topicId": "topic-room-booking",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:01:01.000Z",
+    "name": "Action",
+    "operation_Id": "op-011",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "topicName": "RoomBooking",
+      "topicId": "topic-room-booking",
+      "kind": "BookMeetingRoom",
+      "text": "{\"meetingId\": \"design-review-001\", \"time\": \"2:00 PM\"}",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:01:01.500Z",
+    "name": "BotMessageSend",
+    "operation_Id": "op-011",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "activityType": "message",
+      "fromId": "bot-1",
+      "fromName": "HelpBot",
+      "recipientId": "user-77",
+      "recipientName": "Bob",
+      "text": "Done! Room B-204 has been booked for your Design Review at 2:00 PM.",
+      "designMode": "False"
+    }
+  },
+  {
+    "timestamp": "2025-01-15T11:01:02.000Z",
+    "name": "TopicEnd",
+    "operation_Id": "op-011",
+    "operation_ParentId": "",
+    "session_Id": "sess-def",
+    "customDimensions": {
+      "conversationId": "conv-002",
+      "sessionId": "sess-def",
+      "userId": "user-77",
+      "channelId": "webchat",
+      "topicName": "RoomBooking",
+      "topicId": "topic-room-booking",
+      "designMode": "False"
+    }
+  }
+]

@@ -1,0 +1,515 @@
+{
+  "tables": [
+    {
+      "columns": [
+        {
+          "name": "timestamp",
+          "type": "datetime"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "customDimensions",
+          "type": "dynamic"
+        },
+        {
+          "name": "session_Id",
+          "type": "string"
+        },
+        {
+          "name": "operation_Id",
+          "type": "string"
+        },
+        {
+          "name": "operation_ParentId",
+          "type": "string"
+        }
+      ],
+      "name": "PrimaryResult",
+      "rows": [
+        [
+          "2026-02-19T22:06:43.2866542Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"hello arize copilot agent 2-19\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:06:56.4510187Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.Greeting\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:06:56.4523133Z",
+          "TopicAction",
+          "{\"ActionId\":\"sendMessage_abmysR\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"Greeting\",\"TopicId\":\"auto_agent_Y6JvM.topic.Greeting\",\"Kind\":\"SendActivity\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:06:56.4538763Z",
+          "TopicAction",
+          "{\"ActionId\":\"cancelAllDialogs_01At22\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"Greeting\",\"TopicId\":\"auto_agent_Y6JvM.topic.Greeting\",\"Kind\":\"CancelAllDialogs\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:06:56.4541955Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"PowerVirtualAgentRoot\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:06:56.4553335Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Hello, how can I help you today?\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771538801510\",\"speak\":\"Hello, <break strength=\\\"medium\\\" /> how can I help?\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:07:42.9433277Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"what skills do you have as a copilot?\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:07:44.5014435Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"attachments\":\"[{\\\"ContentType\\\":\\\"application/vnd.microsoft.card.oauth\\\",\\\"Content\\\":{\\\"TokenExchangeResource\\\":{\\\"Id\\\":\\\"87dadb95-b240-4207-87fe-6c232e9af21a\\\",\\\"Uri\\\":\\\"96ff4394-9197-43aa-b393-6a41652e21f8\\\"},\\\"Buttons\\\":[]}}]\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771538862606\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:07:46.2018612Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"invoke\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:07:52.5381738Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"**Arize Copilot Agent Skills**\\n\\nThe Arize Copilot agent is designed to assist AI engineers and data scientists with a wide range of tasks to accelerate development, improve model performance, and streamline workflows. Here are its key skills and capabilities:\\n\\n**LLM Applications & Data Analysis**\\n- AI Search (Column, Table, Text-to-Filter): Search for relevant data, patterns, anomalies, or outliers using natural language queries.\\n- LLM Analysis Lite: Provides suggestions and finds patterns in search results.\\n- Trace Troubleshooting: Enables end-to-end trace navigation to pinpoint and diagnose issues.\\n- Create Custom Evaluations: Writes tailored evaluations for your application based on goals or data analysis.\\n- Diagnose RAG Issues: Analyzes retrieval process responses for relevance and accuracy, offering improvements.\\n- Optimize Prompts: Refines prompts to enhance response quality or address specific issues.\\n- Summarize Evaluation Metrics: Assesses and summarizes evaluation metrics, providing suggestions for performance enhancement.\\n- ArizeQL Generator: Translates natural language or code (SQL, Python) into custom metrics for easy application.\\n- Dashboard Generator: Creates dashboard widgets from natural language or code descriptions.\\n- Span Chat: Enables analysis and evaluation of spans through natural-language interactions.\\n\\n**ML & CV Model Support**\\n- Get Model Insights: Provides high-level analysis of model performance, trends, prediction volumes, and drift.\\n- Cohort Performance Analysis: Analyzes model performance across different data cohorts, identifying poorly performing segments.\\n- Detect Data Drift: Pinpoints input quality issues by examining features and tags for drift, comparing distributions to a baseline[1].\\n\\n**Workflow & Debugging Enhancements**\\n- Multi-Agent Visualization: Visualizes agent workflows as interactive flowcharts, showing step-by-step interactions, tool calls, and task delegation.\\n- Agent Visibility: Helps debug complex multi-agent systems by tracing errors and bottlenecks[2].\\n\\n**Integrated Assistance**\\n- Copilot can be accessed throughout the Arize AX platform and via chat interfaces, offering context-aware help and suggestions.\\n- Reduces manual effort by surfacing relevant information and automating complex tasks.\\n- Supports advanced LLM development, prompt optimization, and powerful data curation[3].\\n\\nIf you need details about a specific skill or want to know how to use one in your workflow, let me know!\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"f:7ea0f71e-11c2-0671-aa27-040f910a815f\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:08:59.6619543Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"can you summarize the copilot and arize ax integration and how it works?\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:00.6551543Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.agent.Agent_OM0\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:00.6557684Z",
+          "AgentStarted",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"AgentType\":\"SubAgent\",\"AgentInputs\":\"{\\\"Task\\\":\\\"Summarize the integration between Copilot and Arize AX and explain how it works.\\\"}\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:06.6289057Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"The integration between Copilot and Arize AX enables seamless AI observability, evaluation, and troubleshooting by connecting Copilot agents with Arize’s platform. It uses a connector or bridge solution to manage data flow, authentication, and event handling between Copilot and Arize. The integration supports telemetry and logging solutions like Application Insights, allowing Copilot agent outputs and logs to be ingested, transformed, and analyzed in Arize for monitoring, debugging, and prompt optimization. Insights and troubleshooting tools from Arize are integrated into Copilot’s user interface, streamlining workflows for AI engineers and data scientists. This integration reduces manual effort, accelerates troubleshooting, and improves reliability and efficiency in AI development and operations.\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771538939320\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:46.0508739Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"is the star wars movie on wikipedia?\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:47.233574Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.agent.Agent\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:47.2343728Z",
+          "AgentStarted",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"AgentType\":\"SubAgent\",\"AgentInputs\":\"{\\\"Task\\\":\\\"Search Wikipedia for the movie \\\\u0027Star Wars\\\\u0027 and confirm if it has a dedicated page or description.\\\"}\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:49.5180861Z",
+          "AgentCompleted",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"AgentType\":\"SubAgent\",\"AgentOutputs\":\"{\\\"$kind\\\":\\\"Record\\\",\\\"properties\\\":{\\\"Summary\\\":{\\\"$kind\\\":\\\"PropertyInfo\\\",\\\"displayName\\\":\\\"Description\\\",\\\"description\\\":\\\"A concise summary of the execution so far, **limited to 500 words**, that clearly captures the most important components and key outcomes, checks if tool_calls_results contains any citation markers such as [^1_2^], [^3_1^], includes all of them exactly as they appear without altering, omitting, or creating new citations, and avoids unnecessary details or verbose context while focusing on clarity and relevance.\\\",\\\"isRequired\\\":true,\\\"type\\\":{\\\"$kind\\\":\\\"String\\\"}}}}\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:09:54.2950937Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Yes, the movie \\\"Star Wars\\\" has a dedicated Wikipedia page that provides a comprehensive description of the film, its history, and its impact as a media franchise. The page includes details about the original 1977 film, its sequels, and the broader Star Wars universe. You can access the page here: https://en.wikipedia.org/wiki/Star_Wars\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771538985603\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:10:41.2074855Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"are you able to do google search?\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:10:42.4767524Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.agent.Agent_9eM\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:10:42.5116746Z",
+          "AgentStarted",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"AgentType\":\"SubAgent\",\"AgentInputs\":\"{\\\"Task\\\":\\\"Can you perform a Google search?\\\"}\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:10:45.8089472Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Yes, I am able to perform Google searches.\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771539040963\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:14.4249065Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"goodbye\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:15.4993223Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"PowerVirtualAgentRoot\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:15.4993802Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.Goodbye\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:15.5000675Z",
+          "TopicAction",
+          "{\"ActionId\":\"question_zf2HhP\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"Goodbye\",\"TopicId\":\"auto_agent_Y6JvM.topic.Goodbye\",\"Kind\":\"Question\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:15.5023874Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Would you like to end our conversation?\",\"attachments\":\"[{\\\"ContentType\\\":\\\"application/vnd.microsoft.card.hero\\\",\\\"Content\\\":{\\\"Images\\\":[],\\\"Buttons\\\":[{\\\"Type\\\":\\\"imBack\\\",\\\"Title\\\":\\\"Yes\\\",\\\"Text\\\":\\\"Yes\\\",\\\"Value\\\":\\\"Yes\\\"},{\\\"Type\\\":\\\"imBack\\\",\\\"Title\\\":\\\"No\\\",\\\"Text\\\":\\\"No\\\",\\\"Value\\\":\\\"No\\\"}]}}]\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771539074107\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1739067Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Yes\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1790979Z",
+          "TopicEnd",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.Goodbye\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1791369Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.Goodbye\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1792848Z",
+          "TopicAction",
+          "{\"ActionId\":\"question_zf2HhP\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"Goodbye\",\"TopicId\":\"auto_agent_Y6JvM.topic.Goodbye\",\"Kind\":\"Question\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1806415Z",
+          "TopicAction",
+          "{\"ActionId\":\"condition_DGc1Wy\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"Goodbye\",\"TopicId\":\"auto_agent_Y6JvM.topic.Goodbye\",\"Kind\":\"ConditionGroup\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.181449Z",
+          "TopicAction",
+          "{\"ActionId\":\"dn94DC\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"Goodbye\",\"TopicId\":\"auto_agent_Y6JvM.topic.Goodbye\",\"Kind\":\"BeginDialog\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1816889Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"PowerVirtualAgentRoot\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1817326Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.EndofConversation\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1822072Z",
+          "TopicAction",
+          "{\"ActionId\":\"41d42054-d4cb-4e90-b922-2b16b37fe379\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"Question\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:20.1848022Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Did that answer your question?\",\"attachments\":\"[{\\\"ContentType\\\":\\\"application/vnd.microsoft.card.hero\\\",\\\"Content\\\":{\\\"Images\\\":[],\\\"Buttons\\\":[{\\\"Type\\\":\\\"imBack\\\",\\\"Title\\\":\\\"Yes\\\",\\\"Text\\\":\\\"Yes\\\",\\\"Value\\\":\\\"Yes\\\"},{\\\"Type\\\":\\\"imBack\\\",\\\"Title\\\":\\\"No\\\",\\\"Text\\\":\\\"No\\\",\\\"Value\\\":\\\"No\\\"}]}}]\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771539079922\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4738961Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Yes\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4781341Z",
+          "TopicEnd",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.EndofConversation\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4781848Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.EndofConversation\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4783856Z",
+          "TopicAction",
+          "{\"ActionId\":\"41d42054-d4cb-4e90-b922-2b16b37fe379\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"Question\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4797354Z",
+          "TopicAction",
+          "{\"ActionId\":\"condition-0\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"ConditionGroup\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4810372Z",
+          "TopicAction",
+          "{\"ActionId\":\"csat_1\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"CSATQuestion\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:25.4820707Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"attachments\":\"[{\\\"ContentType\\\":\\\"application/vnd.microsoft.card.adaptive\\\",\\\"Content\\\":{\\\"$schema\\\":\\\"http://adaptivecards.io/schemas/adaptive-card.json\\\",\\\"type\\\":\\\"AdaptiveCard\\\",\\\"version\\\":\\\"1.0\\\",\\\"body\\\":[{\\\"type\\\":\\\"TextBlock\\\",\\\"text\\\":\\\"Great! Please rate your experience.\\\",\\\"wrap\\\":true},{\\\"type\\\":\\\"ColumnSet\\\",\\\"columns\\\":[{\\\"type\\\":\\\"Column\\\",\\\"items\\\":[{\\\"type\\\":\\\"Image\\\",\\\"size\\\":\\\"small\\\",\\\"altText\\\":\\\"1\\\",\\\"url\\\":\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAA4CAYAAACVFFp4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQASURBVHgB7VnNTttAEJ5du/f0DUx76aWQcuqN0FtPDT1V5W/hBQov0IYngD4BCwTEDXiBEl6ghKqHSpUa8wTkQC8k9nZm7TgOENvxWghV\\\\u002BaTIk7V3/GW/2ZmxY0EBEEI45fKLUrP5sw2G4FAEvE4VfFtAAbChELB3oKAQMDAEyQV\\\\u002Bt6W/cPuplNJINnPJvJtK3\\\\u002B4IMEQBMcSX\\\\u002BzZKZwgjyVCuEsp1FRtqo2wTJrKZrZB3U4U4GYASeF4VDGBGSLFKaJzgLmsGHv0ZMIAZIR7EDOp\\\\u002BpElpbqyqpXxoQkIsVIAkIg7cOwPriQxPlaDbLUNO5F\\\\u002BhrhL6qKAh5aGrAxnt0GvuOMpPiEMYK6FUg/Yy5IQtFj8KYNwZZRL4ysHIcbRtecfRONm\\\\u002BvYlWSSwtbEGw8zKDgWqxIJd0cDLL86uacrf\\\\u002BKj6ARM7xkCeGdoBfr9lhEhPoyMXjl4FLejExDAyO74wptYMn2inziHApNmdd7u1vBadiEOIDFkrrNJIDoIYrsAEFQiwvbiKBtZCJC1zNSXnQ7HO9PYFIeRgHLNopTSwHOEm6YEJEdwUdzFcskJNW37pGv8cDqzm0lqGENYgkxF/isxVZrzcgFxnMWb7ajq38Bq587b5rrWFOmhc/GuWXkxfA1GvtiIEoT03S\\\\u002BBmMQmZp4ROuxiH6oJhpgw9v5V5dDrs\\\\u002BtdrfiSuFgWzZ62kS6t3rdY/wDpVgRKH03hwl0aR5qS1s6GAikpBiy\\\\u002B9eor2WOJFSCesVX/gqd/fXIAOyZ2pub/VMBvw09XqfydCiHqkGGZGdUKz32d7dPUm93rabkKNHyk4o3vvcAm1pva1jCIvtyD3SCJLFe58\\\\u002BVpbmlzGmzumj7QGwHX0YoUfKROhO79Mbx6yrQMcKnSuRjcHfLz\\\\u002BW1SstmXukbA\\\\u002BK1PtwFvU\\\\u002BUdZVqp91CcEWryGpai\\\\u002B7i8WFhh4PeqRG2q0yPXWIpfkW5SFsD4Ti7BKTG8nWkyDKumFq\\\\u002BBz41dl9FRPrFG5/akna4YNk4r1SJQvkYg7ZyodZJHMakrlCezZeArTtw3u8Uv8A9P4NOJ8KT5NslbT7pceQH2tHea9nUufAu9P31TYcO8aM/CYgRZeGrW5wtwqkIFGyWq0G7p/frVhRpFcKmHXr65ABgxLq27nOs\\\\u002BcT5HcYElfIdV0nRuYKNVvNSoagJcQ5eq6Gclz3l5M0J1kyeu8TOGppifYOJIwIPQfnRhKmvEcaSihYVp0M0eHf6bQqnUiK5vInREqi6DNJkg2FLgeL85kq9Eh\\\\u002BMa5MnmzHGOMhYfwCtSgQkVn8tOARoIIfKrbfAYp5U226zP2n22CFHo1sDhS0QsX811EgxoTSMCaUhiIJFfSP2Rhj/Gf4B6gpnUsF8Vk4AAAAAElFTkSuQmCC\\\",\\\"selectAction\\\":{\\\"type\\\":\\\"Action.Submit\\\",\\\"title\\\":\\\"Rate 1\\\",\\\"data\\\":{\\\"rate\\\":\\\"1\\\"}},\\\"horizontalAlignment\\\":\\\"center\\\"}]},{\\\"type\\\":\\\"Column\\\",\\\"items\\\":[{\\\"type\\\":\\\"Image\\\",\\\"size\\\":\\\"small\\\",\\\"altText\\\":\\\"2\\\",\\\"url\\\":\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAA4CAYAAACVFFp4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQqSURBVHgB7VhNctMwFH6SzZpwAxc2bKCBFTsCO1YEVgz9E1yA9gJgTkA5AWobGFZQDgANF6Apw4IZZhr3BM2ibNrY4j3Jdpy0sR0rQ7vIN\\\\u002BPxiyzJX/Q9vfcsB6YAIYRXr1\\\\u002BvdTq/emAJDtNAeNKEyBUwBbgwFbCHoGAqYGAJkguiflf/4O4VKaWVbPaShceNgX0iwBJT8CG\\\\u002BMrBROktYSYZy1VCuw0xTD2Wbs5HNboXC4yZkyQDUIAybYAE7Qoo1YuML7rKOmTG6CxawI8SNz6DunzUpzY01tZT/m5AQiw0giYgDD7\\\\u002BDc0nGj2rQ79ehIqqvUF8JfVfQlvJjoB0Z7XjWyn5UnRCH2FdiqYbtFagIVyw9FcC4N8kgiJSHnuNp2wm303ayI/cNWjWxvLgOZueVBgPVZSaWnOBgVuVfdeRm61a2AYns4q2KD20AP1p14yAmcKIA76\\\\u002BGuiQ\\\\u002BMQ4Mtk\\\\u002B1KbWBD3oF44hwLTNmTW69XzePMhDiCSZKZyeVA8DHFXgNU4RYWXqDBFZjJgFw9UjKD50B19EBRCpEP2DpTulgOsBBMgAbIroqOMF4xYyctPrOEc67PbSaY3MZSuhDKiH\\\\u002Bk4g9k61WGyqRwZgVqXeZlX\\\\u002BNK\\\\u002B\\\\u002Bf1dcZN0ln72e7fuPmHjB1R0/EQNTnb1L7d5iEzPLiC1yNjzgH\\\\u002BUwPInggt1pyXP/CbH/KrxQ6suOuFUmod2/Y/4xvaJgWhdKHjyiI5o0rLGHjCeZSCcm3ov4B2qu5AymUsCT5wlu5\\\\u002BX4VSqB8pObuemIy4DuF/SMmY4tqJB9KojyhTO3zbnPzS2F/1\\\\u002B1AhRqpPKFs7TMC2tJ6W2cQJ9uJa6QJJMvWPgM8W15YQZ/apUvbQ2Ab\\\\u002BjZBjVSK0KnaJ2nHqKtA\\\\u002Bwo9q5GNzj9IP46TpJbSNVK5D0WqfThLa5806io1iLoEs8V9JNVMortYWmzrdlMjtYteVeqrQywvdCkOYXkgFGcHGNxItkSCNOrGoeGlmVdH9\\\\u002BcYWOdx\\\\u002B1NJ0os/JHPfVSiZkYt5ZKsI7iGZnZjMIdr3silA2xE8xp76D\\\\u002BDs34Dz\\\\u002BfgxydYoel\\\\u002BxD0WZcpQnNZPaBd6/fVZuw7ZtjMj3DSnqGpe65m0NKECuZL7vQ7D/p5tJinSkgFG3tQYlMCyhfl3gXb02R/OOQ\\\\u002B4KBUHgZcgcombPy5IhaAlxjB6robwg\\\\u002BO3ljcmXjM59zERdLdHWBwkTQo/BsamEBedIYwmZZdXBECf8e7soS\\\\u002BeSorH8EpGSKPrdPMnGQqeDpYVSGXqiedGvbL5sZ5ihCNaHniNzTOkstjooTv0ASjDmLuCc8QmvRmwTOZX5fS4YjSd00CDAArbHwmcdKhzCBcELvPbhAoB2WULGg3MGkcFDBKwMLwAZAtXKPlwQeGAcmJ1xVYbNLvPwuoxXOHJ9hRlmmGGAf0m\\\\u002Bqlg89W7lAAAAAElFTkSuQmCC\\\",\\\"selectAction\\\":{\\\"type\\\":\\\"Action.Submit\\\",\\\"title\\\":\\\"Rate 2\\\",\\\"data\\\":{\\\"rate\\\":\\\"2\\\"}},\\\"horizontalAlignment\\\":\\\"center\\\"}]},{\\\"type\\\":\\\"Column\\\",\\\"items\\\":[{\\\"type\\\":\\\"Image\\\",\\\"size\\\":\\\"small\\\",\\\"altText\\\":\\\"3\\\",\\\"url\\\":\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAA4CAYAAACVFFp4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAARLSURBVHgB7Vm9cttGEP4OgGdSMl26QEmTJhbtKp3pdKlCu8pEf2e/gKUXSOgnsPIEPkm0x53lMk1Ev0BEZ1J4xjMm/AIWC7uxCJx370AQlEwAxGFsFfpmMFgdcIuP9\\\\u002B3tLiAfDUBKGbbbP7SGw//HcISHJhCfdpEEEg0gQCMQv0KjEQg4guVCMhmZP7zga6WUk2zuksUfOjP7VMIRDcSQtzWzSTpHOElGcrVIrpPc0JhkW3GRzW2F4g9d5MkALcRxFw5wI6RFJzWe0S4bWo/JDTjAjZBnY4Z0f2pIGW6ia6T83ISkXO\\\\u002BAJWIOXvwc/hWVXmphMmmjJuqv0ERLc9YYKPUkMoFMduq1dhzVJ\\\\u002BQhjZVUqnl7CzURyI3fJYQXLjMJiQ4pckJj\\\\u002B/FhNs52EjwgqyU313dhd15lCOiRsLnklCaLOr9qqPb71/IDROSYTnViaA/eu\\\\u002B0gTWKSHEV0/nPulmlMLILA4bkxrffowrhkHhNu5ebsqINHu/ZSDlL\\\\u002BRoXSP8rkAHq0AvfRIOTWxgMisJ0yieDpW0o9Hs64np3ApGKKA5HtlCGVA5qkIrgQMV3BKeUrYeXk1fffkd/DudVcWMtIwh4yCemXJOKO6vcHqEWGclaiH\\\\u002BZW/j6tfO9T9/qLnAxf/Ddo/3j1BYT\\\\u002ByTgSkO3Vqzz\\\\u002BHMuQ2Vy/R6vxhHxwzIyR4Bd10FeL7i\\\\u002Bt9ufiSlMg\\\\u002B8FOmYRm98aTp/SEjh3RJH18i5No0bzSFjZ1sJJJyLGVTN6QvV04kVOJmBZf/KX2H22jAqpnai/YnZoC3lHp/YlQqcU9Ug8VUZ1Qrvd5uL//rPT\\\\u002BIBiiRo9UnVC\\\\u002B9zkD3tJmW\\\\u002BeQFtule6QlJMv3PjPc2Vzbopg65sPYcxB75rREj1SJ0LneZzpOWVfDxApfa7FNwT8rP74/LS2Ve6RqL4rc\\\\u002B3gi632yrKv1LOsy7BbvEanuNLvLjfWBGbc90qDsUZXeOuTm2ojzELUHUnviDSU3lm0qQZZ109Twh/VrsvtdSqyrtP25JRmnL5KFzyqVzMolQrZ1gptE5iglc0L2zXwJMHaC23Sn\\\\u002BQHk/R943mp6mWXrlD2vPIaSXDvqTXsmfQxvcv1TtY3GDikj/2xJ8a1pq2uf1kEJCiXr9XqIXr8a5Yoif1KgrNvfQQXMS2geF4Xffb/CfhehcIWiKApzZE5Is7tVyTCMhDTHzDXQYRS9DIvmFEvG332so5GR6OCxwpIwc2huJmHJd6SFhOyymmRIDt9fL6vShaR4rneFSSkS/UaRZAthysHGWqUKvZRfiiuXN9tLXKIMzh89z/ho6Ftsfdyj4zW4wAD8Cn0NXxicOKdbmFPECfKvyBcALFmICwCOoxVY\\\\u002BZzg\\\\u002Bq8Floel\\\\u002BhZ2ZW7DET7c8BUd38CuEDdiTPBvXCBwN\\\\u002BlU/5r599QM9sXwC4EfzIEsMAtq7nlqfxJ2RQi7q/5Nj7dwlKsphLgguecSl2B8BJ3Zp2kdNcE9AAAAAElFTkSuQmCC\\\",\\\"selectAction\\\":{\\\"type\\\":\\\"Action.Submit\\\",\\\"title\\\":\\\"Rate 3\\\",\\\"data\\\":{\\\"rate\\\":\\\"3\\\"}},\\\"horizontalAlignment\\\":\\\"center\\\"}]},{\\\"type\\\":\\\"Column\\\",\\\"items\\\":[{\\\"type\\\":\\\"Image\\\",\\\"size\\\":\\\"small\\\",\\\"altText\\\":\\\"4\\\",\\\"url\\\":\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAA4CAYAAACVFFp4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAARDSURBVHgB7VlNbtw2FP5IKfvJCSq3m24aT7PqLnJ3XXXSVVH/MblA7Qu0Si9gd9ddaHsSZNU4F4gnF6jHRRcFCnSUE3gKpEARj8Q\\\\u002BkhqNJvZIGlFNg8AfQOiZEqlv\\\\u002BD2\\\\u002B90R7aAFCiKDb/bgzHP42hiM42kBy0UPqC7QAH62AfQmFVsDgCC0X0snI/MH9m1JKJ9ncJUtehzP7QsARLfgQ357ZJJ0jnCQjuTok13mha0yyrbjI5rZCyeseimSADpKkBwe4EVIszIxntMuGdsb0DhzgRohbnyHdnxpShhvrGSnfNiEhNkJoiTQHnryAd0NmtzqYTLpoiOYrNFHCXBUGUj6JjSOTnc3a2I\\\\u002BaE\\\\u002BLIfCWTat7eRkP4YvMbAcaDZQYhVQF5TmBsLznO\\\\u002B7Wd\\\\u002BntkdcTWxj7szqsNBjViNpZc0GDW5FcN5WH/02IHETmlSxMfOgB/teNnQUzQRDFdv597ZOoTi8BwfKlPqQO6Ma4Ypwl3CmN25dGjfXurACG\\\\u002BpkTpneRyABGtwAO0CLG9uUcEdjImMbi6K\\\\u002BXj4YzrmwM0qYT8gOU7ZUjpgAbJGC5ETFVwQfGKWTn16nuvaN7judVcmMtIwgi5hPRLUnZP9vsDNCJDMStVDwsr/4BWPrrqWW/RJMOzXwfdT26dganPzEQMort6S/e/wDJktja\\\\u002BpdV4QnNonxkjxRfyqC8XPV\\\\u002BZ7S/5lSJH9vzdKgnN7k0mT\\\\u002BkNoe1RJH1yVwfRsnGVJWw2wUouofatdPKS7J3SgTqUsGnyxY/y8NEOaqB\\\\u002BpOb\\\\u002B/tRk4CeVz6dMZpaukSLURH1Chdrn4eHhs8rnfX\\\\u002BIBjVSfULF2ucN6C1ttnUBWbJdukZaQrJi7TPDva31bfKpU92MPQd2YC5L1Ei1CF2qfab9FHUVjK/oex1tk/PP0o/nTVNL7Rqp3oeirn04y2ufPOoqNYu6GnaLR0SqN43uYnNjYPptjTSoelWtrw6xtT7ScYjKA6E4e0nBTcs2lSCPullo\\\\u002BM7Oa6L7fQqsq7T9dUkyzj4kS99VKZmViwXaVinWiMxJRuac7LViCjB2iq/oSfMDaPbn4Hw1u61lC6veV\\\\u002B1DaaEc5dOaSZ2CT25flduo75gi8ueWlH40K3Xt20JUoFSyKIoQ//nHqJAU9ZECRd3\\\\u002BLmpgXkLzujj48KMVPe8ilK5QHMdBgcw5aXa/LhkNIyGNMWMNVBDHvwdlY8ol0\\\\u002Bc\\\\u002BdqKRkejoscSSMGNobC5hxTnSQkJ2WU0wpAn/vl2VpUtJ6bH8hiYlSfQ7ZZIthEkHm\\\\u002Bu1MvRS85JfuXzZXuMabxvOh6htIqK2h3cEAWxaqa61K9DWEsvs\\\\u002BgG1NTigjX8tCNjVkXgHsELtF1jJQrQgmcsK3aT2nNoP1GK0BA/N8RNs5XgGe0ClK8OQ2l\\\\u002BwBP9BA7g49c8oHjpZW0uoT9CojF3uOO\\\\u002B/QIj/2YeuQkv/NbvGNd4j/Asx56lIZSPBbQAAAABJRU5ErkJggg==\\\",\\\"selectAction\\\":{\\\"type\\\":\\\"Action.Submit\\\",\\\"title\\\":\\\"Rate 4\\\",\\\"data\\\":{\\\"rate\\\":\\\"4\\\"}},\\\"horizontalAlignment\\\":\\\"center\\\"}]},{\\\"type\\\":\\\"Column\\\",\\\"items\\\":[{\\\"type\\\":\\\"Image\\\",\\\"size\\\":\\\"small\\\",\\\"altText\\\":\\\"5\\\",\\\"url\\\":\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAA4CAYAAACVFFp4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAARPSURBVHgB7Vm9cttGEP4OgHumTAcljZtYjKt0ptOlCp0qE/2d/QCJ9AIJ/ARWnsCQRHvcWe5SRfQLWHQmRWYyY8IPYIuFPeOxCJx3DyBwlEQAxGGsRt/MD\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771539084953\",\"speak\":\"Please take a moment and rate your support experience, from 1 (poor) to 5 (great).\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:29.9926155Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:29.992879Z",
+          "TopicAction",
+          "{\"ActionId\":\"csat_1\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"CSATQuestion\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:29.9942422Z",
+          "TopicAction",
+          "{\"ActionId\":\"sendMessage_8r29O0\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"SendActivity\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:29.9948009Z",
+          "TopicAction",
+          "{\"ActionId\":\"question_1\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"Question\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:29.9960356Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Thanks for your feedback.\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"f:a268928c-e563-d0f5-dc9e-83b5a7f14ab4\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:29.9975238Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Can I help with anything else?\",\"attachments\":\"[{\\\"ContentType\\\":\\\"application/vnd.microsoft.card.hero\\\",\\\"Content\\\":{\\\"Images\\\":[],\\\"Buttons\\\":[{\\\"Type\\\":\\\"imBack\\\",\\\"Title\\\":\\\"Yes\\\",\\\"Text\\\":\\\"Yes\\\",\\\"Value\\\":\\\"Yes\\\"},{\\\"Type\\\":\\\"imBack\\\",\\\"Title\\\":\\\"No\\\",\\\"Text\\\":\\\"No\\\",\\\"Value\\\":\\\"No\\\"}]}}]\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"f:a268928c-e563-d0f5-dc9e-83b5a7f14ab4\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0372387Z",
+          "BotMessageReceived",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"No\",\"fromName\":\"Richard Young\",\"fromId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"type\":\"message\",\"recipientId\":\"28:c40c1118-b26e-4c24-80a7-2edab0c7f993\",\"recipientName\":\"Arize Copilot Agent\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0415877Z",
+          "TopicEnd",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.EndofConversation\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.04163Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"auto_agent_Y6JvM.topic.EndofConversation\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0418001Z",
+          "TopicAction",
+          "{\"ActionId\":\"question_1\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"Question\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0436345Z",
+          "TopicAction",
+          "{\"ActionId\":\"condition-1\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"ConditionGroup\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0446074Z",
+          "TopicAction",
+          "{\"ActionId\":\"yHBz55\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"SendActivity\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0451026Z",
+          "TopicAction",
+          "{\"ActionId\":\"jh1GMT\",\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"End of Conversation\",\"TopicId\":\"auto_agent_Y6JvM.topic.EndofConversation\",\"Kind\":\"EndConversation\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.045328Z",
+          "TopicStart",
+          "{\"channelId\":\"msteams\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"TopicName\":\"PowerVirtualAgentRoot\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ],
+        [
+          "2026-02-19T22:11:39.0458777Z",
+          "BotMessageSend",
+          "{\"channelId\":\"msteams\",\"locale\":\"en-US\",\"text\":\"Ok, goodbye.\",\"recipientId\":\"29:1W6aRXrTvfmahp0fziYOXG31RcJgKrxZvzmSaUYASW6w33dHyGhqKmU9-jyPd5gvRmjGFqoLCzbNuF6FwfdX_7Q\",\"recipientName\":\"Richard Young\",\"DesignMode\":\"False\",\"conversationId\":\"a:1EBqwyb6Xg426E7_-hqVEEOE9l3Kwmns5IQQDJCJf_JrfvVlZ05WmGSG8JB3N9urexbffqygCfiYlmH2UwgOhRpIJPTyl4iDhKO8pgSFzTWdNpUIU_6qkNL6ijkentNyv\",\"replyActivityId\":\"1771539098690\"}",
+          "Ky5pk4juSoAbMZLC1NYvLNrMVj7M5fecAZxvc4TqPbo=",
+          "",
+          ""
+        ]
+      ]
+    }
+  ]
+}
