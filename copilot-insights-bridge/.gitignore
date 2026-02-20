@@ -1,8 +1,35 @@
+# Environment & Secrets
 .env
+.env.local
+*.key
+*.pem
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
 .pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Runtime State
 cursor_state.json
 .bridge_cursor.json
-*.egg-info/
+
+# Data dumps (keep fixtures/, exclude large exports)
 app_insights_export.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

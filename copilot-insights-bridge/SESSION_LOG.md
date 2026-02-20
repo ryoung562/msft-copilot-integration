@@ -106,3 +106,90 @@ User asked about testing against real App Insights data. We discussed:
 - Linting/type checking cleanup (`ruff check`, `mypy`)
 - CI/CD pipeline
 - Production deployment (Azure Container App, Kubernetes, etc.)
+
+---
+
+## Session 3 — Feb 20, 2026
+
+### What was done
+
+#### Comprehensive Project Analysis
+1. Conducted full analysis of project structure, implementation, limitations, and current state
+2. Identified two overlapping work streams:
+   - Session 2 gap analysis work (complete, 98 tests, 10 traces exported, **uncommitted**)
+   - Session 3 OpenInference completeness fixes (partial, 3/9 steps done, **uncommitted**)
+
+#### Work Stream Status Analysis
+- **Session 2 work** is production-ready:
+  - All 6 gap fixes complete and tested
+  - 98/98 tests passing
+  - Successfully exported 10 traces to Arize AX
+  - Ready to commit
+
+- **Session 3 work** is partial (started by previous session, interrupted by usage limits):
+  - ✅ Step 1: Added `ConversationStart` to known events
+  - ✅ Step 2: Added RETRIEVER span kind + synthetic RETRIEVER spans
+  - ✅ Step 3: Added `llm.system` and `llm.provider` to LLM spans
+  - ✅ Added fields: `agent_name`, `summary` to SpanNode
+  - ✅ Added constants: `TOOL_ID`, `LLM_SYSTEM`, `LLM_PROVIDER`, `AGENT_NAME`
+  - ❌ Step 4: Extract/set `agent.name` on AGENT spans (field added, not used)
+  - ❌ Step 5: Set `tool.id` on TOOL spans (constant added, not used)
+  - ❌ Step 6: Add `exception.type` to error events
+  - ❌ Step 7: Use `agent_outputs` from AgentCompleted events
+  - ❌ Step 8: Map `summary` field to metadata (field added, not used)
+  - ❌ Step 9: Write tests for all new features
+  - Current test status: 100/100 passing (but no tests for new Session 3 features)
+
+### Files modified (uncommitted)
+Both work streams are uncommitted:
+- `src/reconstruction/span_models.py` — Session 2 (locale, knowledge_search, system_topic) + Session 3 (RETRIEVER, agent_name, summary)
+- `src/reconstruction/tree_builder.py` — Session 2 (catch-all, knowledge search, system topics, filtering) + Session 3 (ConversationStart, RETRIEVER spans)
+- `src/transformation/mapper.py` — Session 2 (session ID logic, metadata) + Session 3 (llm.system/provider, new constants)
+
+### Current state
+- **100/100 tests passing** (increased from 98 due to Session 3 partial work)
+- **10 traces exported to Arize AX** (Session 2 validation)
+- **Git status**: 3 modified source files, 4 untracked documentation files
+- **Technical debt**: Fields/constants added in Session 3 but not fully utilized
+- **Project state**: Functional but messy (two overlapping uncommitted work streams)
+
+### Where we left off
+User requested comprehensive project analysis to understand full context. Analysis complete (see analysis above in this session).
+
+### Critical Limitations Identified
+
+**Platform Limitations (Microsoft Copilot Studio)**:
+1. Missing TopicEnd events (13 TopicStart vs 3 TopicEnd in live data)
+2. No LLM model names exposed (defaulting to "copilot-studio-generative")
+3. No token counts or cost metrics available
+4. Knowledge search detection requires inference from citations
+5. `session_Id` is persistent user/channel ID, not per-conversation (fixed in Session 2)
+6. Empty `operation_id`/`operation_parent_id` fields (no native distributed tracing)
+
+**Implementation Limitations**:
+1. File-based cursor (not suitable for multi-instance deployment)
+2. ~5 min latency (polling + 2 min ingestion lag buffer)
+3. Per-trace error handling (failed traces dropped, no retry)
+4. No operational monitoring (health checks, metrics, structured logging)
+5. Memory-bound (loads all query results into memory)
+
+### Next steps
+
+**DECISION REQUIRED**: Choose path forward:
+- **Option A**: Commit Session 2 work cleanly, then resume/complete Session 3 work in new commit
+- **Option B**: Complete Session 3 remaining 6 steps now, commit everything together
+- **Option C**: Revert Session 3 partial work, commit only Session 2, resume Session 3 later
+
+**After decision**:
+1. Verify metadata in Arize UI (knowledge_search, system_topic, locale fields)
+2. Update `real_data_dump.json` fixture with latest live data
+3. Optional: Filter PowerVirtualAgentRoot 0-duration spans
+4. Run bridge in polling mode (`run_loop()`) for continuous operation testing
+
+**Production hardening (future)**:
+- Replace file-based cursor with Redis/Azure Blob
+- Add health check endpoint
+- Structured logging (JSON format)
+- Prometheus metrics
+- CI/CD pipeline (GitHub Actions)
+- `--dry-run` CLI flag

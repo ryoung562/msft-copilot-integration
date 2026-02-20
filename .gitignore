@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary/scratch files
+*.tmp
+*.bak
+*~
+
+# Large data dumps
+*.json
+!copilot-insights-bridge/tests/fixtures/*.json
+
+# Credentials
+*.env
+*.key
+*.pem
+
+# IDE
+.vscode/
+.idea/
