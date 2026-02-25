@@ -15,6 +15,12 @@ Thumbs.db
 partner_data_guides/*.html
 partner_data_guides/*.pdf
 
+# Runtime data (state files, exports, temporary data)
+data/
+!data/.gitkeep
+!data/README.md
+!data/*/.gitkeep
+
 # Partner data (contains customer data - never commit)
 partner_data/*/
 !partner_data/_inbox/

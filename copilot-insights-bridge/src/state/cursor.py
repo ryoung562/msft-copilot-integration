@@ -20,8 +20,8 @@ class CursorState(BaseModel):
 class Cursor:
     """Read and write a JSON cursor file to track the last-processed position."""
 
-    def __init__(self, cursor_path: str = ".bridge_cursor.json") -> None:
-        self._path = Path(cursor_path)
+    def __init__(self, cursor_path: str = "../data/state/.bridge_cursor.json") -> None:
+        self._path = Path(cursor_path).resolve()  # Resolve to absolute path
 
     def load(self) -> CursorState:
         """Load cursor state from disk, returning defaults if the file is missing."""
