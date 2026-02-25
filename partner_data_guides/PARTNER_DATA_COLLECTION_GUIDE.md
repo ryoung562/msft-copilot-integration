@@ -101,7 +101,7 @@ customEvents
 
 ---
 
-## Step 3: Sanitize Data (IMPORTANT)
+## Step 3: Sanitize Data
 
 Before sharing, sanitize any sensitive information:
 
@@ -210,7 +210,6 @@ python sanitize.py copilot_events_sample.json
 
 1. **Email**: Attach the JSON file
 2. **Cloud storage**: Upload to SharePoint/OneDrive/Dropbox and share link
-3. **Secure transfer**: Use your organization's secure file transfer method
 
 ### What to Include
 
@@ -224,27 +223,9 @@ When sharing, please provide:
 3. **Any known issues** or special configurations we should be aware of
 4. **Contact info** in case we have questions
 
-### Email Template
+---
 
-```
-Subject: Copilot Studio Telemetry Sample for Bridge Validation
-
-Hi [Arize team],
-
-Attached is a sanitized sample of telemetry data from our Copilot Studio agent.
-
-Agent description:
-- Purpose: [e.g., "Customer support bot for product questions"]
-- Channels: [e.g., "Microsoft Teams"]
-- Features used: [e.g., "Knowledge sources, generative answers, 5 custom topics"]
-
-The data includes [X] events from [Y] conversations over [time period].
-
-Let me know if you need any additional information or different data samples.
-
-Thanks,
-[Your name]
-```
+Thank you for helping us validate the Copilot Studio → Arize AX bridge! 🙏
 
 ---
 
@@ -319,12 +300,3 @@ customEvents
 
 ---
 
-## Questions?
-
-If you have any questions about the data collection process:
-
-1. Check this guide for troubleshooting
-2. Review the sanitization script to understand what's being removed
-3. Contact [your Arize contact] for assistance
-
-Thank you for helping us validate the Copilot Studio → Arize AX bridge! 🙏
