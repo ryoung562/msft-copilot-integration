@@ -4,27 +4,89 @@
 
 ---
 
-## Quick Start
+## 🚀 Starting a New Session
 
-1. **Read the current status first**:
-   ```
-   docs/session-continuity/CURRENT_STATUS.md
-   ```
-   This file always contains the latest project state, decisions needed, and next steps.
+### **Quick Start (Recommended)**
 
-2. **Understand the project**:
-   ```
-   copilot-insights-bridge/README.md            - User-facing documentation
-   copilot-insights-bridge/PLAN.md              - Implementation plan & architecture
-   docs/session-continuity/SESSION_LOG.md       - What was done in each session
-   docs/research/arize-integration-research.md  - Original research document
-   ```
+Ask Claude to read the current status:
 
-3. **Check git status**:
-   ```bash
-   cd copilot-insights-bridge
-   git status
-   ```
+```
+Can you read docs/session-continuity/CURRENT_STATUS.md and continue from where we left off?
+```
+
+This single file contains everything Claude needs:
+- Current implementation status
+- What was done recently
+- Git and test status
+- Decisions required
+- Next steps prioritized
+
+### **Alternative Options**
+
+**Option 1: Just the essentials**
+```
+Read docs/session-continuity/CURRENT_STATUS.md
+```
+
+**Option 2: With full context**
+```
+Read START_HERE.md and docs/session-continuity/CURRENT_STATUS.md
+```
+
+**Option 3: Deep dive (for complex work)**
+```
+Read these files in order:
+1. docs/session-continuity/CURRENT_STATUS.md
+2. docs/session-continuity/SESSION_LOG.md (recent history)
+3. copilot-insights-bridge/PLAN.md (architecture)
+```
+
+**Option 4: Emergency recovery**
+```
+I'm not sure what state the project is in. Can you check
+docs/session-continuity/CURRENT_STATUS.md and tell me what's going on?
+```
+
+---
+
+## 📚 Key Files to Know
+
+1. **docs/session-continuity/CURRENT_STATUS.md** ⭐
+   - **Always read this first** when starting a new session
+   - Latest project state, decisions needed, and next steps
+
+2. **docs/session-continuity/SESSION_LOG.md**
+   - Complete chronological history of all sessions
+   - What was done, where we left off, next steps
+
+3. **copilot-insights-bridge/README.md**
+   - User-facing documentation
+   - Installation and usage instructions
+
+4. **copilot-insights-bridge/PLAN.md**
+   - Implementation plan & architecture
+   - Design decisions and rationale
+
+5. **docs/research/arize-integration-research.md**
+   - Original research document
+   - Background and context
+
+---
+
+## ✅ Before Starting (Optional)
+
+Verify project state:
+
+```bash
+# Navigate to project
+cd /Users/richardyoung/Documents/msft-copilot-integration
+
+# Check git status
+git status
+
+# Verify tests pass (optional)
+cd copilot-insights-bridge && pytest tests/ -q
+```
 
 ---
 
@@ -181,14 +243,27 @@ pytest tests/
 
 ---
 
-## Important Reminders
+## 💡 Session Best Practices
 
-1. **Always read `docs/session-continuity/CURRENT_STATUS.md` first** when starting a new session
-2. **Update `docs/session-continuity/CURRENT_STATUS.md` at end of session** with latest state and next steps
-3. **Update `docs/session-continuity/SESSION_LOG.md`** with what was done in the session
-4. **Update `MEMORY.md`** (in `.claude/projects/.../memory/`) with critical discoveries
-5. **Commit frequently** to avoid losing work
-6. **Check git status** before starting new work to understand uncommitted changes
+### Starting a New Session
+1. **Ask Claude to read `docs/session-continuity/CURRENT_STATUS.md` first**
+   - This gives Claude complete context automatically
+   - See "Starting a New Session" section above for prompt examples
+2. **Don't over-explain** - The documentation has everything Claude needs
+3. **Trust the session continuity system** - It's designed for instant context loading
+
+### Ending a Session (For Claude)
+1. **Update `docs/session-continuity/CURRENT_STATUS.md`** with latest state and next steps
+2. **Update `docs/session-continuity/SESSION_LOG.md`** with what was done
+3. **Update `MEMORY.md`** (in `.claude/projects/.../memory/`) with critical discoveries
+4. **Commit all changes** before ending
+5. **Run session handoff checklist** in `docs/session-continuity/SESSION_HANDOFF_CHECKLIST.md`
+
+### General Tips
+- **Commit frequently** to avoid losing work
+- **Check git status** before starting new work
+- **Run tests** after significant changes
+- **Update documentation** as you make architectural decisions
 
 ---
 
