@@ -11,6 +11,10 @@ Thumbs.db
 *.json
 !copilot-insights-bridge/tests/fixtures/*.json
 
+# Generated files
+partner_data_guides/*.html
+partner_data_guides/*.pdf
+
 # Credentials
 *.env
 *.key
