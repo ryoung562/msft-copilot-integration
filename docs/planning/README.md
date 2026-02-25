@@ -27,6 +27,54 @@ This directory contains implementation planning documents and design artifacts c
 
 ---
 
+### [DIRECTORY_STRUCTURE_ANALYSIS.md](DIRECTORY_STRUCTURE_ANALYSIS.md)
+**Analysis document** that led to the complete directory reorganization (Feb 24, 2026).
+
+**Contents**:
+- Current state assessment (what's working, what's not)
+- Issues identified (mixed document types, scattered files, runtime in source)
+- Recommended structure (Option A: comprehensive, Option B: minimal)
+- Three-phase migration plan with detailed commands
+- Before/after comparison
+
+**Status**:
+- ✅ **Fully implemented** (all 3 phases completed Feb 24, 2026)
+- Phase 1: docs/ hierarchy - Complete
+- Phase 2: data/ directory - Complete
+- Phase 3: examples/ and root README - Complete
+
+**When to reference**:
+- Understanding why the directory structure is organized this way
+- Historical record of architectural decisions
+- Template for future reorganization projects
+
+---
+
+### [PARTNER_DATA_WORKFLOW_ANALYSIS.md](PARTNER_DATA_WORKFLOW_ANALYSIS.md)
+**Analysis document** evaluating multi-partner data validation workflow needs (Feb 24, 2026).
+
+**Contents**:
+- Assessment of initial simple directory structure (insufficient)
+- Enhanced structure design with per-partner directories
+- Inbox/archive workflow system
+- TRACKING.md and metadata.yaml specifications
+- Proposed automation script (partner_data_manager.py)
+- Time savings analysis (70% reduction)
+- Comparison matrix: flat vs. per-partner structure
+
+**Status**:
+- ✅ **Fully implemented** (Phase 1 complete, Feb 24, 2026)
+- Enhanced directory structure: Complete
+- Templates and tracking: Complete
+- Automation script: Not yet built (Phase 2 future work)
+
+**When to reference**:
+- Understanding partner_data/ directory design rationale
+- Planning Phase 2 automation (partner_data_manager.py script)
+- Template for other workflow analysis projects
+
+---
+
 ## Planning Process
 
 ### How Plans Are Created
