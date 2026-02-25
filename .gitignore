@@ -15,6 +15,18 @@ Thumbs.db
 partner_data_guides/*.html
 partner_data_guides/*.pdf
 
+# Partner data (contains customer data - never commit)
+partner_data/*/
+!partner_data/_inbox/
+!partner_data/_templates/
+!partner_data/_archive/
+partner_data/_inbox/*
+!partner_data/_inbox/.gitkeep
+!partner_data/_inbox/README.md
+partner_data/_archive/*
+!partner_data/_archive/.gitkeep
+!partner_data/_archive/README.md
+
 # Credentials
 *.env
 *.key

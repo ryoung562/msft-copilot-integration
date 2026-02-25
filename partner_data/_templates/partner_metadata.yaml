@@ -1,0 +1,72 @@
+# Partner Metadata Template
+# Copy this file to partner_<name>/metadata.yaml and fill in details
+
+partner:
+  name: partner_name_here
+  contact: partner.contact@example.com
+  company: Partner Company Name
+  timezone: UTC  # Partner's timezone for timestamp interpretation
+
+agent:
+  description: |
+    Brief description of what this Copilot agent does.
+    E.g., "Healthcare support chatbot for patient inquiries"
+
+  channels:
+    - msteams
+    # Other options: webchat, directline, slack, etc.
+
+  features:
+    - knowledge_sources
+    - generative_answers
+    - custom_topics
+    # Other features: actions, skills, power_automate, etc.
+
+  use_case: production  # or: development, testing, demo
+
+  languages:
+    - en-US
+    # Add other locales if multi-language
+
+submissions: []
+  # Submissions will be added automatically during processing
+  # Format:
+  # - version: v1
+  #   date: 2026-02-24
+  #   file: data/v1_2026-02-24.json
+  #   events: 150
+  #   conversations: 8
+  #   date_range:
+  #     start: 2026-02-01T00:00:00Z
+  #     end: 2026-02-24T23:59:59Z
+  #   status: processed
+  #   processed_at: 2026-02-24T15:30:00Z
+
+validation:
+  status: pending  # pending, in_review, passed, failed
+  date: null
+  compatibility: null  # percentage (0-100)
+  issues: []
+  # Issues format:
+  # - type: missing_topic_end
+  #   severity: warning
+  #   count: 3
+  #   description: "Some topics missing TopicEnd events"
+
+export:
+  exported: false
+  date: null
+  arize_project: copilot-studio
+  arize_space_id: null
+  trace_count: null
+  verification_status: null  # verified, pending, failed
+
+notes: |
+  Add any free-form notes here about this partner, their data quality,
+  special considerations, or follow-up items.
+
+# Internal tracking
+created_at: null  # Auto-filled by manager script
+updated_at: null  # Auto-filled by manager script
+assigned_to: null  # Optional: person responsible for this partner
+priority: normal  # low, normal, high, urgent
