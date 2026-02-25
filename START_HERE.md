@@ -8,15 +8,16 @@
 
 1. **Read the current status first**:
    ```
-   copilot-insights-bridge/CURRENT_STATUS.md
+   docs/session-continuity/CURRENT_STATUS.md
    ```
    This file always contains the latest project state, decisions needed, and next steps.
 
 2. **Understand the project**:
    ```
-   copilot-insights-bridge/README.md       - User-facing documentation
-   copilot-insights-bridge/PLAN.md         - Implementation plan & architecture
-   copilot-insights-bridge/SESSION_LOG.md  - What was done in each session
+   copilot-insights-bridge/README.md            - User-facing documentation
+   copilot-insights-bridge/PLAN.md              - Implementation plan & architecture
+   docs/session-continuity/SESSION_LOG.md       - What was done in each session
+   docs/research/arize-integration-research.md  - Original research document
    ```
 
 3. **Check git status**:
@@ -32,37 +33,53 @@
 ```
 msft-copilot-integration/
 ├── START_HERE.md                          ← You are here
-├── Arize_AX_Microsoft_Copilot_Integration_Research.docx.md
-├── research-copilot-studio-event-types-in-application-insights.md
-├── openinference_semantic_conventions.md
-├── recent_implementation_plan.txt         ← Session 3 interrupted plan
 │
-└── copilot-insights-bridge/               ← Main implementation
-    ├── CURRENT_STATUS.md                  ← **START HERE** - Always current
-    ├── PLAN.md                            ← Implementation plan
-    ├── SESSION_LOG.md                     ← Session history
-    ├── DATA_SCHEMA.md                     ← Data structure reference
-    ├── README.md                          ← User documentation
-    ├── pyproject.toml                     ← Python dependencies
-    ├── Dockerfile                         ← Container build
-    ├── .env.example                       ← Configuration template
+├── docs/                                  ← All documentation
+│   ├── session-continuity/               ← **START HERE** for session handoffs
+│   │   ├── CURRENT_STATUS.md             ← Always-current project state
+│   │   ├── SESSION_LOG.md                ← Complete session history
+│   │   └── SESSION_HANDOFF_CHECKLIST.md  ← Procedures
+│   ├── research/                         ← Research & reference materials
+│   │   ├── arize-integration-research.md
+│   │   ├── copilot-event-types.md
+│   │   └── openinference-spec.md
+│   └── planning/                         ← Implementation plans
+│       └── session-3-completeness-plan.md
+│
+├── partner_data/                         ← Partner data validation system
+│   ├── _inbox/                           ← Drop zone for submissions
+│   ├── _templates/                       ← Templates for metadata & reports
+│   └── _archive/                         ← Completed validations
+│
+├── partner_data_guides/                  ← Partner-facing documentation
+│   ├── COLLECTION_GUIDE.md               ← Send this to partners
+│   └── WORKFLOW.md                       ← Internal workflow
+│
+└── copilot-insights-bridge/              ← Main implementation
+    ├── PLAN.md                           ← Implementation plan
+    ├── DATA_SCHEMA.md                    ← Data structure reference
+    ├── README.md                         ← User documentation
+    ├── pyproject.toml                    ← Python dependencies
+    ├── Dockerfile                        ← Container build
+    ├── .env.example                      ← Configuration template
     │
-    ├── src/                               ← Source code (3,712 lines Python)
-    │   ├── extraction/                    ← Azure App Insights query
-    │   ├── reconstruction/                ← Trace tree building
-    │   ├── transformation/                ← OpenInference mapping
-    │   ├── export/                        ← OTel span export to Arize
-    │   ├── state/                         ← File-based cursor
-    │   ├── config.py                      ← Pydantic settings
-    │   └── main.py                        ← Pipeline orchestration
+    ├── src/                              ← Source code (3,712 lines Python)
+    │   ├── extraction/                   ← Azure App Insights query
+    │   ├── reconstruction/               ← Trace tree building
+    │   ├── transformation/               ← OpenInference mapping
+    │   ├── export/                       ← OTel span export to Arize
+    │   ├── state/                        ← File-based cursor
+    │   ├── config.py                     ← Pydantic settings
+    │   └── main.py                       ← Pipeline orchestration
     │
-    ├── tests/                             ← 100/100 tests passing
-    │   ├── fixtures/                      ← Test data (synthetic + real)
-    │   └── test_*.py                      ← Unit + integration tests
+    ├── tests/                            ← 100/100 tests passing
+    │   ├── fixtures/                     ← Test data (synthetic + real)
+    │   └── test_*.py                     ← Unit + integration tests
     │
-    └── scripts/                           ← Utility scripts
-        ├── diagnose_gaps.py               ← Offline diagnostic
-        └── export_to_arize.py             ← Ad-hoc export
+    └── scripts/                          ← Utility scripts
+        ├── diagnose_gaps.py              ← Offline diagnostic
+        ├── export_to_arize.py            ← Ad-hoc export
+        └── process_partner_data.py       ← Partner data processing
 ```
 
 ---
@@ -166,9 +183,9 @@ pytest tests/
 
 ## Important Reminders
 
-1. **Always read `CURRENT_STATUS.md` first** when starting a new session
-2. **Update `CURRENT_STATUS.md` at end of session** with latest state and next steps
-3. **Update `SESSION_LOG.md`** with what was done in the session
+1. **Always read `docs/session-continuity/CURRENT_STATUS.md` first** when starting a new session
+2. **Update `docs/session-continuity/CURRENT_STATUS.md` at end of session** with latest state and next steps
+3. **Update `docs/session-continuity/SESSION_LOG.md`** with what was done in the session
 4. **Update `MEMORY.md`** (in `.claude/projects/.../memory/`) with critical discoveries
 5. **Commit frequently** to avoid losing work
 6. **Check git status** before starting new work to understand uncommitted changes
@@ -177,7 +194,8 @@ pytest tests/
 
 ## Questions?
 
-- Read `CURRENT_STATUS.md` for latest state and decisions needed
-- Read `SESSION_LOG.md` for detailed history
-- Read `PLAN.md` for architecture and design decisions
-- Read `DATA_SCHEMA.md` for data structure reference
+- Read `docs/session-continuity/CURRENT_STATUS.md` for latest state and decisions needed
+- Read `docs/session-continuity/SESSION_LOG.md` for detailed history
+- Read `copilot-insights-bridge/PLAN.md` for architecture and design decisions
+- Read `copilot-insights-bridge/DATA_SCHEMA.md` for data structure reference
+- Read `docs/README.md` for complete documentation index
