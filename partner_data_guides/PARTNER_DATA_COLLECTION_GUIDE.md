@@ -11,7 +11,10 @@ We need sample telemetry data from your Microsoft Copilot Studio agents to ensur
 **What we need:**
 - 50-200 events from a few representative conversations
 - Full `customEvents` records with `customDimensions` intact
-- Data can be from test conversations (no production data required)
+- **Test data is perfectly acceptable** - no production data required
+  - Test data from "Test in Bot" interface works great
+  - Production data from Teams/Web channels also works
+  - Both have identical structure and compatibility
 
 **Data privacy:**
 - Instructions below include sanitization steps
@@ -63,10 +66,16 @@ az monitor app-insights query \
   --app "$APP_ID" \
   --analytics-query "customEvents
 | where timestamp between (datetime($START_TIME) .. datetime($END_TIME))
-| where customDimensions.designMode == 'False'
 | take 200
 | project timestamp, name, operation_Id, operation_ParentId, customDimensions" \
   --output json > copilot_events_sample.json
+
+# Note: The query above includes both test and production data.
+# If you want ONLY production data (from real channels like Teams/Web), add:
+# | where customDimensions.designMode == 'False'
+#
+# If you want ONLY test data (from "Test in Bot" interface), add:
+# | where customDimensions.designMode == 'True'
 ```
 
 **File created**: `copilot_events_sample.json`
@@ -88,10 +97,14 @@ Paste this query:
 ```kusto
 customEvents
 | where timestamp > ago(7d)
-| where customDimensions.designMode == "False"
 | take 200
 | project timestamp, name, operation_Id, operation_ParentId, customDimensions
 ```
+
+**Note**: This query includes both test and production data. If you want to filter:
+- **Production only** (Teams/Web channels): Add `| where customDimensions.designMode == "False"`
+- **Test only** ("Test in Bot"): Add `| where customDimensions.designMode == "True"`
+- **Both**: No filter needed (shown above)
 
 ### Step 3: Export Results
 
@@ -248,9 +261,13 @@ We will **NOT**:
 ## Troubleshooting
 
 ### "No data returned"
-- Check date range in query (`START_TIME` and `END_TIME`)
-- Verify Application Insights is receiving data: check "Live Metrics" in portal
-- Ensure `designMode == 'False'` filter isn't excluding all data (try removing it for testing)
+- **Check date range** in query (`START_TIME` and `END_TIME`)
+- **Verify Application Insights is receiving data**: check "Live Metrics" in portal
+- **If using a test agent in "Test in Bot"**: Remove the `designMode == 'False'` filter
+  - Test interface data has `designMode == 'True'`
+  - Test data is perfectly valid for validation!
+  - The filter was optional, not required
+- **Try without any filters first**: Remove all `where` clauses except timestamp to see what data exists
 
 ### "Permission denied"
 - Ensure you have Reader role on the Application Insights resource
@@ -263,6 +280,18 @@ We will **NOT**:
 ### "Azure CLI not working"
 - Update Azure CLI: `az upgrade`
 - Try using Azure Portal method instead (Option 2)
+
+### "I only have test data from 'Test in Bot'"
+- **That's perfectly fine!** Test data works great for validation
+- Test data has identical structure to production data
+- Just remove any `designMode == 'False'` filters from the query
+- Use the query without filters (shown in Option 1 and Option 2 above)
+
+### "Portal export vs CLI export differences"
+Both export methods work, but they format data slightly differently:
+- **Azure CLI**: Field named `timestamp`, ISO 8601 format
+- **Azure Portal**: Field named `timestamp [UTC]`, M/D/YYYY format
+- **Good news**: The bridge handles both automatically!
 
 ---
 
@@ -278,12 +307,11 @@ customEvents
 | take 50
 ```
 
-### Only Get Generative AI Conversations
+### Only Get Conversations with Generative AI
 
 ```kusto
 customEvents
 | where timestamp > ago(7d)
-| where customDimensions.designMode == "False"
 | where name in ("AgentStarted", "AgentCompleted", "GenerativeAnswers")
 | take 200
 ```
@@ -293,10 +321,20 @@ customEvents
 ```kusto
 customEvents
 | where timestamp > ago(7d)
-| where customDimensions.designMode == "False"
 | where name in ("Action", "TopicAction")
 | take 200
 ```
+
+### Get Both Test and Production Data
+
+```kusto
+customEvents
+| where timestamp > ago(7d)
+| take 200
+| project timestamp, name, operation_Id, operation_ParentId, customDimensions
+```
+
+**Reminder**: All queries above work with both test and production data unless you add a `designMode` filter.
 
 ---
 
