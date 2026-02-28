@@ -8,11 +8,11 @@
 
 | Partner | Submissions | Latest | Status | Issues | Exported | Priority |
 |---------|-------------|--------|--------|--------|----------|----------|
-| _(none yet)_ | - | - | - | - | - | - |
+| pg | 1 | v1 (2026-02-27) | ✅ Validated | 0 | 📋 Ready | High |
 
-**Total partners**: 0
-**Total submissions**: 0
-**Validated**: 0
+**Total partners**: 1
+**Total submissions**: 1
+**Validated**: 1
 **Exported to Arize**: 0
 **Pending review**: 0
 
@@ -22,20 +22,22 @@
 
 _(Partners currently being processed or validated)_
 
-### Example Format (Remove this when adding real partners)
-
-#### partner_example
-- **Contact**: john@example.com
-- **Company**: Example Corp
-- **Use case**: Healthcare support chatbot
-- **Channels**: Teams, Web
-- **Submissions**: v1 (2026-02-15), v2 (2026-02-20)
-- **Status**: ✅ Validated
-- **Compatibility**: 95%
+#### pg
+- **Contact**: tasneem.abdalla@arize.com (Internal)
+- **Company**: Arize AI
+- **Use case**: Test agent for bridge validation
+- **Channels**: pva-studio (Test in Bot)
+- **Submissions**: v1 (2026-02-27)
+- **Status**: ✅ Validated - 100% compatibility
+- **Compatibility**: 100%
 - **Issues**:
-  - Missing TopicEnd events (10 of 25 topics)
-- **Exported**: Yes (2026-02-21)
-- **Next steps**: None - validation complete
+  - ✅ RESOLVED: Timestamp field name (Portal vs CLI export)
+    - Bridge updated to handle both formats automatically
+- **Exported**: Not yet (ready for export)
+- **Next steps**:
+  - Update collection guide (clarify test data is acceptable)
+  - Export to Arize for visual verification
+  - Send validation results to partner
 
 ---
 
@@ -57,9 +59,9 @@ _(Partners with completed validation - moved to `_archive/`)_
 
 | Issue | Partners Affected | Severity | Status |
 |-------|------------------|----------|--------|
-| Missing TopicEnd events | - | Medium | - |
-| No locale information | - | Low | - |
-| Incomplete conversation boundaries | - | High | - |
+| Timestamp field name (Portal export) | pg | High | ✅ Resolved (bridge updated) |
+| Missing TopicEnd events | pg (16/26) | Low | ✅ Expected for system topics |
+| Test data compatibility | - | - | ✅ Confirmed compatible |
 
 ---
 
@@ -67,19 +69,19 @@ _(Partners with completed validation - moved to `_archive/`)_
 
 ### Submission Timeline
 ```
-2026-02-24: 0 submissions
+2026-02-27: 1 submission (pg v1)
 ```
 
 ### Feature Coverage
 - **Knowledge search detected**: 0 partners
-- **Custom topics**: 0 partners
+- **Custom topics**: 1 partner (pg)
 - **LLM responses**: 0 partners
-- **Actions/Tools**: 0 partners
+- **Actions/Tools**: 1 partner (pg)
 
 ### Data Quality
-- **Average compatibility**: 0%
-- **Average issues per partner**: 0
-- **Most common issue**: N/A
+- **Average compatibility**: 100%
+- **Average issues per partner**: 0 (1 issue resolved automatically)
+- **Most common issue**: Azure Portal export format (resolved)
 
 ---
 
@@ -126,4 +128,7 @@ python scripts/partner_data_manager.py summary
 
 ## Change Log
 
+- **2026-02-27**: First partner submission! PG (Tasneem Abdalla) - 100% validated
+  - Bridge updated to handle Azure Portal export format
+  - Confirmed test data (DesignMode=True) is fully compatible
 - **2026-02-24**: Initial tracking file created

@@ -69,6 +69,10 @@ class AppInsightsEvent(BaseModel):
 
         Handles ``customDimensions`` arriving as either a JSON string or a dict.
         Supports both camelCase and PascalCase field names.
+
+        Also handles timestamp field variations from different export methods:
+        - Azure CLI: "timestamp"
+        - Azure Portal: "timestamp [UTC]"
         """
         raw_dims = row.get("customDimensions")
         if isinstance(raw_dims, str):
@@ -86,8 +90,11 @@ class AppInsightsEvent(BaseModel):
             or ""
         )
 
+        # timestamp: handle both Azure CLI ("timestamp") and Portal ("timestamp [UTC]") formats
+        timestamp_value = row.get("timestamp") or row.get("timestamp [UTC]")
+
         return cls(
-            timestamp=_require_datetime(row.get("timestamp")),
+            timestamp=_require_datetime(timestamp_value),
             name=str(row.get("name", "")),
             operation_id=str(row.get("operation_Id", "") or ""),
             operation_parent_id=str(row.get("operation_ParentId", "") or ""),
@@ -134,9 +141,33 @@ def _opt_str(value: object) -> Optional[str]:
 
 
 def _require_datetime(value: object) -> datetime:
-    """Coerce *value* to a ``datetime``, raising on failure."""
+    """Coerce *value* to a ``datetime``, raising on failure.
+
+    Supports multiple timestamp formats:
+    - ISO 8601: "2026-02-27T14:30:00Z"
+    - Azure Portal export: "2/27/2026, 2:47:13.411 PM"
+    """
     if isinstance(value, datetime):
         return value
     if isinstance(value, str):
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        # Try ISO 8601 format first (most common)
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+
+        # Try Azure Portal export format: "M/D/YYYY, H:MM:SS.mmm AM/PM"
+        if "/" in value and "," in value:
+            try:
+                # With milliseconds
+                return datetime.strptime(value, "%m/%d/%Y, %I:%M:%S.%f %p")
+            except ValueError:
+                try:
+                    # Without milliseconds
+                    return datetime.strptime(value, "%m/%d/%Y, %I:%M:%S %p")
+                except ValueError:
+                    pass
+
+        raise ValueError(f"Cannot parse timestamp string: {value}")
+
     raise TypeError(f"Cannot convert {type(value).__name__} to datetime")
