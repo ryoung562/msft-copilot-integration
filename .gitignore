@@ -63,3 +63,6 @@ partner_data/_archive/*
 # IDE
 .vscode/
 .idea/
+
+# Playwright MCP browser automation
+.playwright-mcp/
