@@ -4,10 +4,12 @@
 Usage:
     python scripts/export_to_arize.py                      # uses live_data_dump.json
     python scripts/export_to_arize.py real_data_dump.json   # uses a specific fixture
+    python scripts/export_to_arize.py --shift-to-now        # shift timestamps to now
 """
 
 import logging
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 # Add project root to path
@@ -18,6 +20,7 @@ load_dotenv()
 
 from src.config import BridgeSettings
 from src.extraction.models import AppInsightsEvent
+from src.reconstruction.span_models import SpanNode
 from src.reconstruction.tree_builder import TraceTreeBuilder
 from src.transformation.mapper import OpenInferenceMapper
 from src.export.otel_exporter import create_tracer_provider, shutdown_tracer_provider
@@ -31,8 +34,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _shift_tree_timestamps(node: "SpanNode", offset: timedelta) -> None:
+    """Recursively shift all start/end times in a span tree by *offset*."""
+    node.start_time = node.start_time + offset
+    node.end_time = node.end_time + offset
+    for child in node.children:
+        _shift_tree_timestamps(child, offset)
+
+
 def main() -> None:
-    fixture_name = sys.argv[1] if len(sys.argv) > 1 else "live_data_dump.json"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    flags = [a for a in sys.argv[1:] if a.startswith("--")]
+    fixture_name = args[0] if args else "live_data_dump.json"
+    shift_to_now = "--shift-to-now" in flags
 
     # Load settings from .env
     settings = BridgeSettings()  # type: ignore[call-arg]
@@ -46,6 +60,15 @@ def main() -> None:
     builder = TraceTreeBuilder()
     trees = builder.build_trees(events)
     logger.info("Built %d trace trees", len(trees))
+
+    # Optionally shift timestamps to current time (for historical data re-export)
+    if shift_to_now and trees:
+        latest_end = max(root.end_time for root in trees)
+        now = datetime.now(timezone.utc)
+        offset = now - latest_end
+        logger.info("Shifting timestamps forward by %s (latest span end → now)", offset)
+        for root in trees:
+            _shift_tree_timestamps(root, offset)
 
     # Set up Arize OTLP exporter
     provider = create_tracer_provider(

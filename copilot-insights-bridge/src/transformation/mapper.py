@@ -123,8 +123,8 @@ class OpenInferenceMapper:
             tags.append("knowledge_search")
         if node.is_system_topic:
             tags.append("system_topic")
-        # Serialize tags as JSON array for Arize compatibility
-        attrs[TAG_TAGS] = json.dumps(tags)
+        # OTel natively supports Sequence[str]; Arize expects a native list.
+        attrs[TAG_TAGS] = tags
 
         # -- LLM-specific attributes --
         if node.span_kind == SpanKind.LLM:
@@ -135,9 +135,17 @@ class OpenInferenceMapper:
             if node.llm_input is not None:
                 attrs[f"{LLM_INPUT_MESSAGES}.0.message.role"] = "user"
                 attrs[f"{LLM_INPUT_MESSAGES}.0.message.content"] = node.llm_input
+                # Also set input.value so Arize shows it in the span detail panel
+                if not node.input_messages:
+                    attrs[INPUT_VALUE] = node.llm_input
+                    attrs[INPUT_MIME_TYPE] = MIME_TEXT_PLAIN
             if node.llm_output is not None:
                 attrs[f"{LLM_OUTPUT_MESSAGES}.0.message.role"] = "assistant"
                 attrs[f"{LLM_OUTPUT_MESSAGES}.0.message.content"] = node.llm_output
+                # Also set output.value so Arize shows it in the span detail panel
+                if not node.output_messages:
+                    attrs[OUTPUT_VALUE] = node.llm_output
+                    attrs[OUTPUT_MIME_TYPE] = MIME_TEXT_PLAIN
 
         # -- TOOL-specific attributes --
         if node.span_kind == SpanKind.TOOL:
