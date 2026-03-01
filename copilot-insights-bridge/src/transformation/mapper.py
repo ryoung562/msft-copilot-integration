@@ -123,7 +123,8 @@ class OpenInferenceMapper:
             tags.append("knowledge_search")
         if node.is_system_topic:
             tags.append("system_topic")
-        attrs[TAG_TAGS] = tags
+        # Serialize tags as JSON array for Arize compatibility
+        attrs[TAG_TAGS] = json.dumps(tags)
 
         # -- LLM-specific attributes --
         if node.span_kind == SpanKind.LLM:
