@@ -22,7 +22,7 @@ All commands run from `copilot-insights-bridge/` unless noted.
 pip install .
 pip install ".[dev]"      # includes pytest, ruff, mypy
 
-# Run tests (100 tests)
+# Run tests (116 tests)
 pytest tests/ -v
 pytest tests/test_reconstruction.py -v   # single file
 pytest tests/test_reconstruction.py::test_name -v  # single test
@@ -32,11 +32,17 @@ ruff check src/
 ruff format src/ --check
 mypy src/
 
-# Run the bridge (single cycle, requires .env with Azure/Arize creds)
+# Run the bridge (continuous polling, requires .env with Azure/Arize creds)
 python -m src.main
 
-# Process partner data (from repo root)
-python scripts/export_partner_to_arize.py
+# Import a data file (default: inspect mode — stats + diagnostics)
+python scripts/import_to_arize.py tests/fixtures/live_data_dump.json
+
+# Import and export to Arize
+python scripts/import_to_arize.py data.json --export --shift-to-now
+
+# Offline gap analysis (detailed per-span report)
+python scripts/diagnose_gaps.py live_data_dump.json
 ```
 
 ## Architecture

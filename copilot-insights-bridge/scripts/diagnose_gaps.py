@@ -15,19 +15,23 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from tests.conftest import load_real_data_table
-from src.extraction.models import AppInsightsEvent
+from src.extraction.loader import load_events_from_file
 from src.reconstruction.tree_builder import TraceTreeBuilder
 from src.reconstruction.span_models import SpanKind
 from src.transformation.mapper import OpenInferenceMapper
 
+FIXTURES_DIR = Path(__file__).resolve().parent.parent / "tests" / "fixtures"
+
 
 def main() -> None:
     # --- Load & parse ---
-    fixture_name = sys.argv[1] if len(sys.argv) > 1 else "real_data_dump.json"
-    rows = load_real_data_table(fixture_name)
-    events = [AppInsightsEvent.from_query_row(r) for r in rows]
-    print(f"Loaded {len(events)} raw events from {fixture_name}\n")
+    arg = sys.argv[1] if len(sys.argv) > 1 else "real_data_dump.json"
+    # If a bare filename is given, look in the fixtures directory
+    path = Path(arg)
+    if not path.exists() and not path.is_absolute():
+        path = FIXTURES_DIR / arg
+    events = load_events_from_file(path)
+    print(f"Loaded {len(events)} raw events from {path.name}\n")
 
     # --- Show raw event type breakdown ---
     event_counts: dict[str, int] = {}

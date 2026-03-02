@@ -6,7 +6,7 @@ import re
 import json
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from src.extraction.models import AppInsightsEvent
@@ -39,6 +39,14 @@ _KNOWN_TOPIC_EVENTS = {
 
 # Regex to detect citation markers like [1], [2] in bot output
 _CITATION_PATTERN = re.compile(r"\[\d+\]")
+
+
+def shift_tree_timestamps(node: SpanNode, offset: timedelta) -> None:
+    """Recursively shift all start/end times in a span tree by *offset*."""
+    node.start_time = node.start_time + offset
+    node.end_time = node.end_time + offset
+    for child in node.children:
+        shift_tree_timestamps(child, offset)
 
 
 def _topic_names_match(name_a: str | None, name_b: str | None) -> bool:
