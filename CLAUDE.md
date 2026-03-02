@@ -4,95 +4,75 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A bridge service (`copilot-insights-bridge/`) that pulls Microsoft Copilot Studio telemetry from Azure Application Insights and exports it to Arize AX as OpenTelemetry/OpenInference spans. The core pipeline is complete and live-validated (10 traces exported).
+A bridge service (`copilot-insights-bridge/`) that pulls Microsoft Copilot Studio telemetry from Azure Application Insights and exports it to Arize AX as OpenTelemetry/OpenInference spans. The core pipeline is complete and live-validated.
 
 ## Session Continuity
 
-This project uses a documentation system for cross-session context. At session start, read:
+At session start, read these files for context:
 1. `docs/session-continuity/CURRENT_STATUS.md` — Latest state, next steps
 2. `copilot-insights-bridge/PLAN.md` — Architecture and design decisions
 3. `copilot-insights-bridge/DATA_SCHEMA.md` — Data structures and field mappings
 
 ## Commands
 
-All commands run from `copilot-insights-bridge/` unless noted.
+All commands run from `copilot-insights-bridge/`.
 
 ```bash
-# Install dependencies
+# Install
 pip install .
 pip install ".[dev]"      # includes pytest, ruff, mypy
 
-# Run tests (116 tests)
+# Tests (116 tests)
 pytest tests/ -v
-pytest tests/test_reconstruction.py -v   # single file
-pytest tests/test_reconstruction.py::test_name -v  # single test
+pytest tests/test_reconstruction.py -v                    # single file
+pytest tests/test_reconstruction.py::TestClass::test_fn   # single test
 
 # Lint and type check
-ruff check src/
-ruff format src/ --check
+ruff check src/ tests/
 mypy src/
 
-# Run the bridge (continuous polling, requires .env with Azure/Arize creds)
+# Continuous polling (requires .env with Azure/Arize creds)
 python -m src.main
 
-# Import a data file (default: inspect mode — stats + diagnostics)
-python scripts/import_to_arize.py tests/fixtures/live_data_dump.json
-
-# Import and export to Arize
-python scripts/import_to_arize.py data.json --export --shift-to-now
-
-# Offline gap analysis (detailed per-span report)
-python scripts/diagnose_gaps.py live_data_dump.json
+# File import — two scripts:
+python scripts/import_to_arize.py data.json                          # inspect (stats + diagnostics)
+python scripts/import_to_arize.py data.json --export --shift-to-now  # export to Arize
+python scripts/diagnose_gaps.py live_data_dump.json                  # detailed per-span analysis
 ```
 
 ## Architecture
 
-The pipeline has four stages, each in its own module under `copilot-insights-bridge/src/`:
+See `copilot-insights-bridge/CLAUDE.md` for detailed architecture, span hierarchy, configuration table, and technical gotchas.
 
-```
-extraction/ → reconstruction/ → transformation/ → export/
-```
+Two entry points:
+- **`src/main.py`** — Continuous polling from Azure App Insights (production use)
+- **`scripts/import_to_arize.py`** — Universal file import with `--stats`, `--diagnose`, `--export`, `--shift-to-now`
 
-1. **Extraction** (`extraction/client.py`): Queries Azure App Insights `customEvents` table via `azure-monitor-query` SDK. KQL queries defined in `queries.py`. Raw rows parsed into `AppInsightsEvent` Pydantic models (`models.py`).
+Pipeline: `extraction/ → reconstruction/ → transformation/ → export/`
 
-2. **Reconstruction** (`reconstruction/tree_builder.py`): The most complex stage. Converts flat events into hierarchical span trees:
-   - Groups events by `conversation_id`
-   - Splits conversations into turns at each user message (`BotMessageReceived`)
-   - Pairs `TopicStart`/`TopicEnd` into time windows using a stack with fuzzy name matching
-   - Assigns events to topic windows by timestamp + topic name
-   - Creates: root AGENT span → CHAIN children (topics) → LLM/TOOL leaf spans
+The reconstruction stage (`tree_builder.py`) is the most complex — it converts flat Azure events into hierarchical `SpanNode` trees grouped by conversation, split into per-turn traces.
 
-3. **Transformation** (`transformation/mapper.py`): Maps `SpanNode` trees to OpenInference attribute dictionaries. Handles session ID hashing (SHA-256 for IDs >128 chars), LLM message formatting, metadata/tag assembly.
+## Critical Gotchas
 
-4. **Export** (`export/span_builder.py`, `export/otel_exporter.py`): Creates real OTel SDK spans from historical data with explicit timestamps. Uses `NonRecordingSpan` + `SpanContext` for parent-child linking. Exports via `OTLPSpanExporter` to `otlp.arize.com:443`.
+- **Session ID**: Use `conversation_id` as Arize `session.id`, NOT Copilot's `session_Id` (persistent user/channel ID). IDs > 128 chars are SHA-256 hashed.
+- **Parent-child spans**: Must use `span.get_span_context().span_id` (SDK-assigned), not deterministic IDs.
+- **Missing TopicEnd**: Many topics never emit TopicEnd — implicit-close at turn boundary handles this.
+- **OTel attributes**: `tag.tags` must be native `list[str]`, not `json.dumps()`.
+- **Arize time window**: Historical re-exports need `--shift-to-now` so ingestion time aligns with span times.
 
-**State**: `state/cursor.py` — File-based JSON high-water mark cursor tracking `last_processed_timestamp`.
+## File Loader Formats
 
-**Config**: `config.py` — Pydantic `BaseSettings` with `BRIDGE_` env var prefix.
-
-**Orchestration**: `main.py` — `BridgePipeline.run_once()` executes one poll cycle; `run_loop()` runs continuously.
-
-## Critical Technical Gotchas
-
-- **Session ID semantics**: Copilot Studio's `session_Id` is a persistent user/channel identifier, NOT per-conversation. The bridge uses `conversation_id` as Arize's `session.id`.
-- **Parent-child span linking**: Must use `span.get_span_context().span_id` (SDK-assigned) for parent references, not deterministic IDs.
-- **Missing TopicEnd events**: Many Copilot topics never emit TopicEnd. The reconstruction handles this via implicit-close at the last event timestamp.
-- **OTel import path**: `InMemorySpanExporter` is at `opentelemetry.sdk.trace.export.in_memory_span_exporter` (not `.in_memory`).
-- **Topic name matching**: Real data uses prefixed names like `auto_agent_Y6JvM.topic.Greeting` alongside short names like `Greeting`. Fuzzy matching strips prefixes.
-- **Arize session.id limit**: 128 chars max. Copilot conversation IDs can be 131+ chars, requiring SHA-256 hashing.
-
-## Test Structure
-
-Tests are in `copilot-insights-bridge/tests/` with fixtures in `tests/fixtures/` (JSON files with synthetic and real App Insights data). Key fixtures:
-- `single_conversation.json`, `multi_topic_conversation.json` — synthetic scenarios
-- `real_data_dump.json`, `live_data_dump.json` — real Azure data (table format, converted via `conftest.py:load_real_data_table()`)
+`src/extraction/loader.py` auto-detects four JSON formats:
+1. **SDK table** — `{"tables": [{"columns": [...], "rows": [...]}]}`
+2. **Azure CLI** — `{"tables": [{"rows": [[...], ...]}]}` (positional arrays, no column metadata)
+3. **Event array** — `[{"timestamp": ..., "name": ..., "customDimensions": {...}}, ...]`
+4. **Flat row-dict** — `[{"timestamp": ..., "name": ..., "operation_Id": ..., ...}]` (synthetic fixtures)
 
 ## Configuration
 
-Environment variables (prefix `BRIDGE_`):
-- `BRIDGE_APPINSIGHTS_RESOURCE_ID` — Azure resource ID
-- `BRIDGE_ARIZE_SPACE_ID`, `BRIDGE_ARIZE_API_KEY`, `BRIDGE_ARIZE_PROJECT_NAME`
+Environment variables (prefix `BRIDGE_`), loaded via Pydantic `BaseSettings` in `src/config.py`:
+- `BRIDGE_APPINSIGHTS_RESOURCE_ID` — Azure resource ID (required)
+- `BRIDGE_ARIZE_SPACE_ID`, `BRIDGE_ARIZE_API_KEY` — Arize credentials (required)
+- `BRIDGE_ARIZE_PROJECT_NAME` (default: `copilot-studio`)
 - `BRIDGE_POLL_INTERVAL_MINUTES` (default: 5), `BRIDGE_INITIAL_LOOKBACK_HOURS` (default: 24)
 - `BRIDGE_EXCLUDE_DESIGN_MODE` (default: true)
-
-Example configs in `examples/env/`.
