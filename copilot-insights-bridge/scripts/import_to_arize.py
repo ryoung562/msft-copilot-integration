@@ -219,6 +219,8 @@ def export_trees(trees: list, shift_to_now: bool) -> None:
     # Optionally shift timestamps
     if shift_to_now and trees:
         latest_end = max(root.end_time for root in trees)
+        if latest_end.tzinfo is None:
+            latest_end = latest_end.replace(tzinfo=timezone.utc)
         now = datetime.now(timezone.utc)
         offset = now - latest_end
         logger.info("Shifting timestamps forward by %s (latest span end -> now)", offset)
