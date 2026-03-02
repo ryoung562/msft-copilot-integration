@@ -49,6 +49,7 @@ All settings use environment variables with the `BRIDGE_` prefix:
 | `BRIDGE_POLL_INTERVAL_MINUTES` | No | `5` | Polling interval in minutes |
 | `BRIDGE_INITIAL_LOOKBACK_HOURS` | No | `24` | Hours to look back on first run |
 | `BRIDGE_EXCLUDE_DESIGN_MODE` | No | `true` | Filter out test canvas conversations |
+| `BRIDGE_CURSOR_PATH` | No | `.bridge_cursor.json` | Path to the polling cursor state file |
 
 ## Quick Start
 
