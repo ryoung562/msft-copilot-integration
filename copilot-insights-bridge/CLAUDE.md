@@ -83,6 +83,7 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 | `BRIDGE_POLL_INTERVAL_MINUTES` | no | `5` |
 | `BRIDGE_INITIAL_LOOKBACK_HOURS` | no | `24` |
 | `BRIDGE_EXCLUDE_DESIGN_MODE` | no | `true` |
+| `BRIDGE_CURSOR_PATH` | no | `.bridge_cursor.json` |
 
 ## Key Technical Details
 
@@ -117,4 +118,3 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 
 - `PLAN.md` — Full 10-step implementation plan and architecture decisions
 - `DATA_SCHEMA.md` — Complete field catalog, event types, and data mapping reference
-- `docs/session-continuity/CURRENT_STATUS.md` — Project state and next steps

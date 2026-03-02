@@ -32,7 +32,7 @@ class BridgePipeline:
             project_name=settings.arize_project_name,
         )
         self._span_builder = SpanBuilder(self._provider.get_tracer("copilot-bridge"))
-        self._cursor = Cursor()
+        self._cursor = Cursor(cursor_path=settings.cursor_path)
 
     def run_once(self) -> int:
         """Execute a single poll cycle. Returns the number of events processed."""

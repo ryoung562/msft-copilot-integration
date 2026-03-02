@@ -25,3 +25,6 @@ class BridgeSettings(BaseSettings):
 
     # Filtering
     exclude_design_mode: bool = True
+
+    # State
+    cursor_path: str = ".bridge_cursor.json"

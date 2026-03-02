@@ -6,13 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A bridge service (`copilot-insights-bridge/`) that pulls Microsoft Copilot Studio telemetry from Azure Application Insights and exports it to Arize AX as OpenTelemetry/OpenInference spans. The core pipeline is complete and live-validated.
 
-## Session Continuity
-
-At session start, read these files for context:
-1. `docs/session-continuity/CURRENT_STATUS.md` — Latest state, next steps
-2. `copilot-insights-bridge/PLAN.md` — Architecture and design decisions
-3. `copilot-insights-bridge/DATA_SCHEMA.md` — Data structures and field mappings
-
 ## Commands
 
 All commands run from `copilot-insights-bridge/`.
@@ -76,3 +69,4 @@ Environment variables (prefix `BRIDGE_`), loaded via Pydantic `BaseSettings` in 
 - `BRIDGE_ARIZE_PROJECT_NAME` (default: `copilot-studio`)
 - `BRIDGE_POLL_INTERVAL_MINUTES` (default: 5), `BRIDGE_INITIAL_LOOKBACK_HOURS` (default: 24)
 - `BRIDGE_EXCLUDE_DESIGN_MODE` (default: true)
+- `BRIDGE_CURSOR_PATH` (default: `.bridge_cursor.json`)
