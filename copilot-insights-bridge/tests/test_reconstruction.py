@@ -6,6 +6,14 @@ from src.extraction.models import AppInsightsEvent
 from src.reconstruction.span_models import SpanKind, SpanNode
 from src.reconstruction.tree_builder import TraceTreeBuilder
 
+# Names of structural message spans added by the builder
+_MSG_SPAN_NAMES = {"BotMessageReceived", "BotMessageSend"}
+
+
+def _topic_chains(node: SpanNode) -> list[SpanNode]:
+    """Return non-message CHAIN children (topic/workflow spans only)."""
+    return [c for c in node.children if c.name not in _MSG_SPAN_NAMES]
+
 
 class TestTraceTreeBuilder:
     def setup_method(self) -> None:
@@ -46,8 +54,9 @@ class TestTraceTreeBuilder:
         self, single_conversation_events: list[AppInsightsEvent]
     ) -> None:
         root = self.builder.build_trees(single_conversation_events)[0]
-        assert len(root.children) == 1
-        chain = root.children[0]
+        chains = _topic_chains(root)
+        assert len(chains) == 1
+        chain = chains[0]
         assert chain.span_kind == SpanKind.CHAIN
         assert chain.name == "PasswordReset"
         assert chain.topic_name == "PasswordReset"
@@ -56,7 +65,7 @@ class TestTraceTreeBuilder:
         self, single_conversation_events: list[AppInsightsEvent]
     ) -> None:
         root = self.builder.build_trees(single_conversation_events)[0]
-        chain = root.children[0]
+        chain = _topic_chains(root)[0]
         llm_spans = [c for c in chain.children if c.span_kind == SpanKind.LLM]
         assert len(llm_spans) == 1
         llm = llm_spans[0]
@@ -69,7 +78,7 @@ class TestTraceTreeBuilder:
         self, single_conversation_events: list[AppInsightsEvent]
     ) -> None:
         root = self.builder.build_trees(single_conversation_events)[0]
-        chain = root.children[0]
+        chain = _topic_chains(root)[0]
         # BotMessageReceived arrives before TopicStart so it becomes an orphan on root.
         # BotMessageSend arrives within the topic window so it attaches to the chain.
         assert len(chain.output_messages) == 1
@@ -89,18 +98,20 @@ class TestTraceTreeBuilder:
         assert len(trees) == 2
         assert trees[0].conversation_id == "conv-002"
         assert trees[1].conversation_id == "conv-002"
-        # Each trace has 1 chain
-        assert len(trees[0].children) == 1
-        assert trees[0].children[0].name == "CalendarLookup"
-        assert len(trees[1].children) == 1
-        assert trees[1].children[0].name == "RoomBooking"
+        # Each trace has 1 topic chain (plus message spans)
+        topic_chains_0 = _topic_chains(trees[0])
+        assert len(topic_chains_0) == 1
+        assert topic_chains_0[0].name == "CalendarLookup"
+        topic_chains_1 = _topic_chains(trees[1])
+        assert len(topic_chains_1) == 1
+        assert topic_chains_1[0].name == "RoomBooking"
 
     def test_action_creates_tool_span(
         self, multi_topic_events: list[AppInsightsEvent]
     ) -> None:
         trees = self.builder.build_trees(multi_topic_events)
         # CalendarLookup is in the first turn's trace
-        calendar_chain = trees[0].children[0]
+        calendar_chain = next(c for c in trees[0].children if c.name == "CalendarLookup")
         tool_spans = [c for c in calendar_chain.children if c.span_kind == SpanKind.TOOL]
         assert len(tool_spans) == 1
         tool = tool_spans[0]
@@ -117,16 +128,16 @@ class TestTraceTreeBuilder:
         assert trees[0].conversation_id == "conv-003"
         assert trees[1].conversation_id == "conv-003"
         for tree in trees:
-            assert len(tree.children) == 1
-            llm_children = [c for c in tree.children[0].children if c.span_kind == SpanKind.LLM]
+            chains = _topic_chains(tree)
+            assert len(chains) == 1
+            llm_children = [c for c in chains[0].children if c.span_kind == SpanKind.LLM]
             assert len(llm_children) == 1
 
     def test_error_attached_to_tool_span(
         self, error_events: list[AppInsightsEvent]
     ) -> None:
         root = self.builder.build_trees(error_events)[0]
-        chain = root.children[0]
-        assert chain.name == "EscalateToAgent"
+        chain = next(c for c in root.children if c.name == "EscalateToAgent")
         tool_spans = [c for c in chain.children if c.span_kind == SpanKind.TOOL]
         assert len(tool_spans) == 1
         tool = tool_spans[0]
@@ -312,7 +323,7 @@ class TestUnknownEventCatchAll:
         ]
         trees = self.builder.build_trees(events)
         assert len(trees) == 1
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         tool_spans = [c for c in chain.children if c.span_kind == SpanKind.TOOL]
         assert len(tool_spans) == 1
         assert tool_spans[0].name == "CustomPrompt"
@@ -345,7 +356,7 @@ class TestUnknownEventCatchAll:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         tool_spans = [c for c in chain.children if c.span_kind == SpanKind.TOOL]
         assert len(tool_spans) == 1
         assert tool_spans[0].name == "MCPToolCall"
@@ -377,7 +388,7 @@ class TestUnknownEventCatchAll:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         tool_spans = [c for c in chain.children if c.span_kind == SpanKind.TOOL]
         assert "ScreenshotFailed" in tool_spans[0].errors
         assert "ScreenshotFailed" in chain.errors
@@ -545,7 +556,7 @@ class TestSystemTopicDetection:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         assert chain.is_system_topic is True
 
     def test_prefixed_system_topic_detected(self) -> None:
@@ -575,7 +586,7 @@ class TestSystemTopicDetection:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         assert chain.is_system_topic is True
 
     def test_goodbye_is_system_topic(self) -> None:
@@ -604,7 +615,7 @@ class TestSystemTopicDetection:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         assert chain.is_system_topic is True
 
     def test_endofconversation_is_system_topic(self) -> None:
@@ -633,7 +644,7 @@ class TestSystemTopicDetection:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         assert chain.is_system_topic is True
 
     def test_custom_topic_not_flagged(self) -> None:
@@ -662,7 +673,7 @@ class TestSystemTopicDetection:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         assert chain.is_system_topic is False
 
 
@@ -784,7 +795,7 @@ class TestLocaleExtraction:
             ),
         ]
         trees = self.builder.build_trees(events)
-        chain = trees[0].children[0]
+        chain = _topic_chains(trees[0])[0]
         assert chain.locale == "es-mx"
 
 
@@ -866,3 +877,165 @@ class TestEmptyWrapperChainFiltering:
         root = trees[0]
         chain_names = [c.name for c in root.children]
         assert "PowerVirtualAgentRoot" in chain_names
+
+
+class TestMessageSpanCreation:
+    """BotMessageReceived/BotMessageSend events create CHAIN child spans."""
+
+    def setup_method(self) -> None:
+        self.builder = TraceTreeBuilder()
+
+    def test_orphan_received_creates_chain_child(self) -> None:
+        """Orphan BotMessageReceived creates a CHAIN child on root with input text."""
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="message",
+                text="How do I reset my password?",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="BotMessageSend",
+                text="You can reset it at the portal.",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        root = trees[0]
+        msg_children = [c for c in root.children if c.name == "BotMessageReceived"]
+        assert len(msg_children) == 1
+        msg = msg_children[0]
+        assert msg.span_kind == SpanKind.CHAIN
+        assert "reset my password" in msg.input_messages[0]
+
+    def test_orphan_send_creates_chain_child(self) -> None:
+        """Orphan BotMessageSend creates a CHAIN child on root with output text."""
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="message",
+                text="Hello",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="BotMessageSend",
+                text="Hi there! How can I help?",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        root = trees[0]
+        msg_children = [c for c in root.children if c.name == "BotMessageSend"]
+        assert len(msg_children) == 1
+        msg = msg_children[0]
+        assert msg.span_kind == SpanKind.CHAIN
+        assert "How can I help" in msg.output_messages[0]
+
+    def test_orphan_received_at_beginning_send_at_end(self) -> None:
+        """Orphan received messages come first, send messages come last."""
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="message",
+                text="Hello",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="BotMessageSend",
+                text="Hi!",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        root = trees[0]
+        assert root.children[0].name == "BotMessageReceived"
+        assert root.children[-1].name == "BotMessageSend"
+
+    def test_in_window_send_creates_chain_child(self) -> None:
+        """BotMessageSend within a topic window creates a CHAIN child on the topic chain."""
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="message",
+                text="Help with billing",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="TopicStart",
+                topic_name="Billing",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="BotMessageSend",
+                text="Your balance is $42.",
+                topic_name="Billing",
+                timestamp=datetime(2025, 6, 1, 12, 0, 2, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="TopicEnd",
+                topic_name="Billing",
+                timestamp=datetime(2025, 6, 1, 12, 0, 3, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        chain = _topic_chains(trees[0])[0]
+        send_spans = [c for c in chain.children if c.name == "BotMessageSend"]
+        assert len(send_spans) == 1
+        assert send_spans[0].span_kind == SpanKind.CHAIN
+        assert "$42" in send_spans[0].output_messages[0]
+        # Chain still has output_messages populated (existing behavior)
+        assert "$42" in chain.output_messages[0]
+
+    def test_message_spans_preserve_existing_io(self) -> None:
+        """Root input_messages/output_messages are still populated alongside message spans."""
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="message",
+                text="Hello",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="TopicStart",
+                topic_name="Greeting",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="BotMessageSend",
+                text="Hi!",
+                topic_name="Greeting",
+                timestamp=datetime(2025, 6, 1, 12, 0, 2, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="TopicEnd",
+                topic_name="Greeting",
+                timestamp=datetime(2025, 6, 1, 12, 0, 3, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        root = trees[0]
+        # Root still has input/output messages (regression check)
+        assert "Hello" in root.input_messages
+        assert "Hi!" in root.output_messages
+        # Topic chain still has output_messages
+        chain = _topic_chains(root)[0]
+        assert "Hi!" in chain.output_messages
+
+    def test_non_message_received_no_span(self) -> None:
+        """BotMessageReceived with activity_type 'event' should NOT create a message span."""
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="event",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="BotMessageSend",
+                text="Thanks for your feedback.",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        root = trees[0]
+        recv_spans = [c for c in root.children if c.name == "BotMessageReceived"]
+        assert len(recv_spans) == 0

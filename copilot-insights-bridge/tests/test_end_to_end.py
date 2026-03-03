@@ -70,9 +70,9 @@ class TestEndToEnd:
         # Should have processed 5 events
         assert result == 5
 
-        # Expected spans: root AGENT + 1 CHAIN (PasswordReset) + 1 LLM (GenerativeAnswers)
-        # + messages attached to chain (not separate spans)
-        assert len(spans) == 3
+        # Expected spans: root AGENT + BotMessageReceived CHAIN + PasswordReset CHAIN
+        # + GenerativeAnswers LLM + BotMessageSend CHAIN
+        assert len(spans) == 5
 
         span_names = {s.name for s in spans}
         assert "Copilot Studio Conversation" in span_names
@@ -114,8 +114,9 @@ class TestEndToEnd:
 
         assert result == 10
 
-        # 2 turns: each has root AGENT + 1 CHAIN + 1 TOOL = 3 spans × 2 = 6
-        assert len(spans) == 6
+        # 2 turns: each has root AGENT + BotMessageReceived CHAIN + topic CHAIN
+        # + TOOL + BotMessageSend CHAIN = 5 spans × 2 = 10
+        assert len(spans) == 10
         span_names = {s.name for s in spans}
         assert "Copilot Studio Conversation" in span_names
         assert "CalendarLookup" in span_names

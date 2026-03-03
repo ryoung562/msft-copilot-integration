@@ -494,6 +494,21 @@ class TraceTreeBuilder:
                 # Only treat actual user messages as input text
                 if event.activity_type not in _NON_MESSAGE_TYPES and event.text:
                     chain.input_messages.append(event.text)
+                    child = SpanNode(
+                        name="BotMessageReceived",
+                        span_kind=SpanKind.CHAIN,
+                        start_time=event.timestamp,
+                        end_time=event.timestamp,
+                        conversation_id=conv_id,
+                        session_id=event.session_id,
+                        user_id=event.user_id,
+                        channel_id=event.channel_id,
+                        topic_name=window.topic_name,
+                        topic_id=window.topic_id,
+                        raw_events=[event],
+                    )
+                    child.input_messages.append(event.text)
+                    chain.children.append(child)
 
             elif event.name == "BotMessageSend":
                 if event.text:
@@ -502,6 +517,21 @@ class TraceTreeBuilder:
                     if pending_agent_span is not None and pending_agent_span.llm_output is None:
                         pending_agent_span.llm_output = event.text
                         pending_agent_span = None
+                    child = SpanNode(
+                        name="BotMessageSend",
+                        span_kind=SpanKind.CHAIN,
+                        start_time=event.timestamp,
+                        end_time=event.timestamp,
+                        conversation_id=conv_id,
+                        session_id=event.session_id,
+                        user_id=event.user_id,
+                        channel_id=event.channel_id,
+                        topic_name=window.topic_name,
+                        topic_id=window.topic_id,
+                        raw_events=[event],
+                    )
+                    child.output_messages.append(event.text)
+                    chain.children.append(child)
 
             elif event.name not in _KNOWN_TOPIC_EVENTS:
                 # Unknown event type within a topic — create a generic TOOL span
@@ -542,7 +572,15 @@ class TraceTreeBuilder:
 
     @staticmethod
     def _attach_orphans(root: SpanNode, orphans: list[AppInsightsEvent]) -> None:
-        """Attach orphan events (outside any topic window) to the root AGENT span."""
+        """Attach orphan events (outside any topic window) to the root AGENT span.
+
+        Also creates CHAIN child spans for user/bot messages so they appear
+        in the Arize trace tree.  Received messages are placed at the
+        beginning of root.children, send messages at the end.
+        """
+        received_children: list[SpanNode] = []
+        send_children: list[SpanNode] = []
+
         for event in orphans:
             root.raw_events.append(event)
 
@@ -550,11 +588,40 @@ class TraceTreeBuilder:
                 # Only treat actual user messages as input
                 if event.activity_type not in _NON_MESSAGE_TYPES and event.text:
                     root.input_messages.append(event.text)
+                    child = SpanNode(
+                        name="BotMessageReceived",
+                        span_kind=SpanKind.CHAIN,
+                        start_time=event.timestamp,
+                        end_time=event.timestamp,
+                        conversation_id=root.conversation_id,
+                        session_id=event.session_id or root.session_id,
+                        user_id=event.user_id or root.user_id,
+                        channel_id=event.channel_id or root.channel_id,
+                        raw_events=[event],
+                    )
+                    child.input_messages.append(event.text)
+                    received_children.append(child)
             elif event.name == "BotMessageSend" and event.text:
                 root.output_messages.append(event.text)
+                child = SpanNode(
+                    name="BotMessageSend",
+                    span_kind=SpanKind.CHAIN,
+                    start_time=event.timestamp,
+                    end_time=event.timestamp,
+                    conversation_id=root.conversation_id,
+                    session_id=event.session_id or root.session_id,
+                    user_id=event.user_id or root.user_id,
+                    channel_id=event.channel_id or root.channel_id,
+                    raw_events=[event],
+                )
+                child.output_messages.append(event.text)
+                send_children.append(child)
 
             if event.error_code_text:
                 root.errors.append(event.error_code_text)
+
+        # Insert received messages at beginning, send messages at end
+        root.children = received_children + root.children + send_children
 
     @staticmethod
     def _propagate_root_context(root: SpanNode) -> None:
@@ -621,7 +688,10 @@ class TraceTreeBuilder:
         """
         has_input = bool(root.input_messages)
         has_output = bool(root.output_messages)
-        has_children = bool(root.children)
+        # Message spans (BotMessageReceived/BotMessageSend) are structural —
+        # don't count them as "real" children for knowledge search detection.
+        _msg_names = {"BotMessageReceived", "BotMessageSend"}
+        has_children = any(c.name not in _msg_names for c in root.children)
         has_citations = any(
             _CITATION_PATTERN.search(msg) for msg in root.output_messages
         )
