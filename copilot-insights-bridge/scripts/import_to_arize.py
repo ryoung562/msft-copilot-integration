@@ -216,16 +216,20 @@ def export_trees(trees: list, shift_to_now: bool) -> None:
 
     settings = BridgeSettings()  # type: ignore[call-arg]
 
-    # Optionally shift timestamps
+    # Optionally shift timestamps so every trace ends near "now".
+    # Arize's span detail panel queries a narrow 2-day window around each
+    # span's startTime.  If the data spans more than ~2 days, a single
+    # global offset leaves older traces outside that window, causing blank
+    # detail panels.  Shift each tree individually to avoid this.
     if shift_to_now and trees:
-        latest_end = max(root.end_time for root in trees)
-        if latest_end.tzinfo is None:
-            latest_end = latest_end.replace(tzinfo=timezone.utc)
         now = datetime.now(timezone.utc)
-        offset = now - latest_end
-        logger.info("Shifting timestamps forward by %s (latest span end -> now)", offset)
         for root in trees:
+            tree_end = root.end_time
+            if tree_end.tzinfo is None:
+                tree_end = tree_end.replace(tzinfo=timezone.utc)
+            offset = now - tree_end
             shift_tree_timestamps(root, offset)
+        logger.info("Shifted %d trees so each ends at now", len(trees))
 
     # Set up Arize OTLP exporter
     provider = create_tracer_provider(

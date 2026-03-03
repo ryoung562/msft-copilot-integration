@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -157,14 +157,15 @@ def _require_datetime(value: object) -> datetime:
             pass
 
         # Try Azure Portal export format: "M/D/YYYY, H:MM:SS.mmm AM/PM"
+        # Portal timestamps are UTC but lack timezone info — attach explicitly.
         if "/" in value and "," in value:
             try:
                 # With milliseconds
-                return datetime.strptime(value, "%m/%d/%Y, %I:%M:%S.%f %p")
+                return datetime.strptime(value, "%m/%d/%Y, %I:%M:%S.%f %p").replace(tzinfo=timezone.utc)
             except ValueError:
                 try:
                     # Without milliseconds
-                    return datetime.strptime(value, "%m/%d/%Y, %I:%M:%S %p")
+                    return datetime.strptime(value, "%m/%d/%Y, %I:%M:%S %p").replace(tzinfo=timezone.utc)
                 except ValueError:
                     pass
 

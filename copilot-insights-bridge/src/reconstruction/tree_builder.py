@@ -130,6 +130,7 @@ class TraceTreeBuilder:
             self._remove_empty_wrapper_chains(root)
             self._detect_knowledge_search(root)
             self._propagate_locale(root)
+            self._propagate_design_mode(root)
 
         # Filter out empty traces (no input, no output, no children)
         roots = [r for r in roots if not self._is_empty_trace(r)]
@@ -229,6 +230,11 @@ class TraceTreeBuilder:
                 locale = e.locale
                 break
 
+        # Derive design_mode flag — true if any event is flagged as design mode
+        design_mode = any(
+            e.design_mode and e.design_mode.lower() == "true" for e in events
+        )
+
         root = SpanNode(
             name=_AGENT_SPAN_NAME,
             span_kind=SpanKind.AGENT,
@@ -239,6 +245,7 @@ class TraceTreeBuilder:
             user_id=user_id,
             channel_id=first.channel_id,
             locale=locale,
+            design_mode=design_mode,
         )
 
         # Identify topic windows and assign events into them
@@ -525,9 +532,11 @@ class TraceTreeBuilder:
             if event.error_code_text and event.name not in ("GenerativeAnswers", "Action", "TopicAction"):
                 chain.errors.append(event.error_code_text)
 
-        # Set system topic flag on the CHAIN span
+        # Set system topic flag on the CHAIN span and its children
         if _is_system_topic(window.topic_name):
             chain.is_system_topic = True
+            for child in chain.children:
+                child.is_system_topic = True
 
         return chain
 
@@ -631,6 +640,20 @@ class TraceTreeBuilder:
         def _fill(node: SpanNode) -> None:
             if not node.locale:
                 node.locale = root.locale
+            for child in node.children:
+                _fill(child)
+
+        for child in root.children:
+            _fill(child)
+
+    @staticmethod
+    def _propagate_design_mode(root: SpanNode) -> None:
+        """Copy the root's design_mode flag to all descendants."""
+        if not root.design_mode:
+            return
+
+        def _fill(node: SpanNode) -> None:
+            node.design_mode = True
             for child in node.children:
                 _fill(child)
 

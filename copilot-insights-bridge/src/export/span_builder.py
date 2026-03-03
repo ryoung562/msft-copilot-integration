@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Callable
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from opentelemetry import trace as trace_api
@@ -21,6 +21,8 @@ from src.reconstruction.span_models import SpanNode
 
 def _dt_to_ns(dt: datetime) -> int:
     """Convert a datetime to nanoseconds since epoch (OTel SDK format)."""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
     return int(dt.timestamp() * 1e9)
 
 

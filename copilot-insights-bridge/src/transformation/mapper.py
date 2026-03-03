@@ -123,6 +123,17 @@ class OpenInferenceMapper:
             tags.append("knowledge_search")
         if node.is_system_topic:
             tags.append("system_topic")
+        elif node.topic_name is not None:
+            tags.append("custom_topic")
+        if node.design_mode:
+            tags.append("design_mode")
+        else:
+            tags.append("production")
+        if node.locale:
+            tags.append(node.locale)
+        if node.errors:
+            tags.append("has_error")
+        tags.append(node.span_kind.value.lower())
         # OTel natively supports Sequence[str]; Arize expects a native list.
         attrs[TAG_TAGS] = tags
 

@@ -46,4 +46,5 @@ class SpanNode:
     locale: Optional[str] = None
     knowledge_search_detected: bool = False
     is_system_topic: bool = False
+    design_mode: bool = False
     raw_events: list[Any] = field(default_factory=list)
