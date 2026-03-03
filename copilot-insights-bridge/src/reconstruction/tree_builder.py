@@ -429,6 +429,7 @@ class TraceTreeBuilder:
                     topic_id=window.topic_id,
                     llm_input=event.message,
                     llm_output=event.result,
+                    summary=event.summary,
                     raw_events=[event],
                 )
                 if event.error_code_text:
@@ -489,6 +490,23 @@ class TraceTreeBuilder:
                 if pending_agent_span is not None:
                     pending_agent_span.end_time = event.timestamp
                     pending_agent_span.raw_events.append(event)
+                    # Parse agent_outputs as fallback for llm_output
+                    # (BotMessageSend takes priority — only set if still None)
+                    if pending_agent_span.llm_output is None and event.agent_outputs:
+                        try:
+                            outputs = json.loads(event.agent_outputs)
+                            if isinstance(outputs, dict):
+                                # Use "Answer" key if present, else first string value
+                                answer = outputs.get("Answer")
+                                if answer:
+                                    pending_agent_span.llm_output = str(answer)
+                                else:
+                                    for v in outputs.values():
+                                        if isinstance(v, str) and v:
+                                            pending_agent_span.llm_output = v
+                                            break
+                        except (json.JSONDecodeError, AttributeError):
+                            pass
 
             elif event.name == "BotMessageReceived":
                 # Only treat actual user messages as input text

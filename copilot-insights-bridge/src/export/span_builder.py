@@ -78,7 +78,7 @@ class SpanBuilder:
 
         # Record errors as exception events and set status.
         for error in node.errors:
-            span.add_event("exception", {"exception.message": error})
+            span.add_event("exception", {"exception.type": error, "exception.message": error})
         if node.errors:
             span.set_status(StatusCode.ERROR, node.errors[0])
 

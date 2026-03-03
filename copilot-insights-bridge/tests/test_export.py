@@ -193,3 +193,25 @@ class TestSpanBuilder:
 
         span = exporter.get_finished_spans()[0]
         assert span.attributes["custom.attr"] == "test-value"
+
+    def test_error_event_has_exception_type(self) -> None:
+        provider, exporter = _make_provider_and_exporter()
+        builder = SpanBuilder(provider.get_tracer("test"))
+
+        error_node = SpanNode(
+            name="ErrorSpan",
+            span_kind=SpanKind.AGENT,
+            start_time=datetime(2025, 1, 15, 10, 0, 0, tzinfo=timezone.utc),
+            end_time=datetime(2025, 1, 15, 10, 0, 1, tzinfo=timezone.utc),
+            conversation_id="conv-err",
+            session_id="sess-err",
+            user_id="user-err",
+            channel_id="msteams",
+            errors=["AgentTransferFailed"],
+        )
+        builder.export_trace_tree(error_node, attributes_map=_identity_mapper)
+        provider.force_flush()
+
+        span = exporter.get_finished_spans()[0]
+        assert span.events[0].attributes["exception.type"] == "AgentTransferFailed"
+        assert span.events[0].attributes["exception.message"] == "AgentTransferFailed"

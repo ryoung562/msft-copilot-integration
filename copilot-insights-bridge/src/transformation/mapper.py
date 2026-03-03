@@ -27,6 +27,9 @@ LLM_OUTPUT_MESSAGES = "llm.output_messages"
 LLM_TOKEN_COUNT_PROMPT = "llm.token_count.prompt"
 LLM_TOKEN_COUNT_COMPLETION = "llm.token_count.completion"
 TOOL_NAME = "tool.name"
+TOOL_ID = "tool.id"
+LLM_SYSTEM = "llm.system"
+LLM_PROVIDER = "llm.provider"
 
 MIME_TEXT_PLAIN = "text/plain"
 
@@ -106,6 +109,8 @@ class OpenInferenceMapper:
             metadata["action_id"] = node.action_id
         if node.locale is not None:
             metadata["locale"] = node.locale
+        if node.summary is not None:
+            metadata["summary"] = node.summary
         if node.knowledge_search_detected:
             metadata["knowledge_search_detected"] = True
         if node.is_system_topic:
@@ -139,6 +144,8 @@ class OpenInferenceMapper:
 
         # -- LLM-specific attributes --
         if node.span_kind == SpanKind.LLM:
+            attrs[LLM_SYSTEM] = "copilot-studio"
+            attrs[LLM_PROVIDER] = "azure"
             if node.agent_type == "SubAgent":
                 attrs[LLM_MODEL_NAME] = "copilot-studio-subagent"
             else:
@@ -162,6 +169,8 @@ class OpenInferenceMapper:
         if node.span_kind == SpanKind.TOOL:
             if node.tool_name is not None:
                 attrs[TOOL_NAME] = node.tool_name
+            if node.action_id is not None:
+                attrs[TOOL_ID] = node.action_id
             # Prefer explicit input_messages; fall back to llm_input for tool input.
             if node.input_messages:
                 attrs[INPUT_VALUE] = "\n".join(node.input_messages)

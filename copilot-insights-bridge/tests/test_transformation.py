@@ -237,3 +237,39 @@ class TestOpenInferenceMapper:
         attrs = self.mapper.map_attributes(node)
         metadata = json.loads(attrs["metadata"])
         assert "topic_type" not in metadata
+
+    def test_llm_system_and_provider(self) -> None:
+        node = _make_node(span_kind=SpanKind.LLM)
+        attrs = self.mapper.map_attributes(node)
+        assert attrs["llm.system"] == "copilot-studio"
+        assert attrs["llm.provider"] == "azure"
+
+    def test_tool_id_from_action_id(self) -> None:
+        node = _make_node(
+            span_kind=SpanKind.TOOL,
+            tool_name="SendMessage",
+            action_id="sendMessage_abc123",
+        )
+        attrs = self.mapper.map_attributes(node)
+        assert attrs["tool.id"] == "sendMessage_abc123"
+
+    def test_tool_id_absent_when_no_action_id(self) -> None:
+        node = _make_node(span_kind=SpanKind.TOOL, tool_name="SearchAction", action_id=None)
+        attrs = self.mapper.map_attributes(node)
+        assert "tool.id" not in attrs
+
+    def test_summary_in_metadata(self) -> None:
+        import json
+
+        node = _make_node(summary="The user asked about billing policies.")
+        attrs = self.mapper.map_attributes(node)
+        metadata = json.loads(attrs["metadata"])
+        assert metadata["summary"] == "The user asked about billing policies."
+
+    def test_no_summary_when_none(self) -> None:
+        import json
+
+        node = _make_node(summary=None)
+        attrs = self.mapper.map_attributes(node)
+        metadata = json.loads(attrs["metadata"])
+        assert "summary" not in metadata

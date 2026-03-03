@@ -1039,3 +1039,51 @@ class TestMessageSpanCreation:
         root = trees[0]
         recv_spans = [c for c in root.children if c.name == "BotMessageReceived"]
         assert len(recv_spans) == 0
+
+
+class TestAgentCompletedOutput:
+    """AgentCompleted should populate llm_output from agent_outputs JSON."""
+
+    def setup_method(self) -> None:
+        self.builder = TraceTreeBuilder()
+
+    def test_agent_completed_sets_llm_output_from_agent_outputs(self) -> None:
+        """When no BotMessageSend precedes AgentCompleted, parse agent_outputs."""
+        import json
+
+        events = [
+            _make_event(
+                name="BotMessageReceived",
+                activity_type="message",
+                text="What is the refund policy?",
+                timestamp=datetime(2025, 6, 1, 12, 0, 0, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="TopicStart",
+                topic_name="RefundAgent",
+                timestamp=datetime(2025, 6, 1, 12, 0, 1, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="AgentStarted",
+                topic_name="RefundAgent",
+                agent_type="SubAgent",
+                agent_inputs=json.dumps({"Task": "What is the refund policy?"}),
+                timestamp=datetime(2025, 6, 1, 12, 0, 2, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="AgentCompleted",
+                topic_name="RefundAgent",
+                agent_outputs=json.dumps({"Answer": "You can get a refund within 30 days."}),
+                timestamp=datetime(2025, 6, 1, 12, 0, 3, tzinfo=timezone.utc),
+            ),
+            _make_event(
+                name="TopicEnd",
+                topic_name="RefundAgent",
+                timestamp=datetime(2025, 6, 1, 12, 0, 4, tzinfo=timezone.utc),
+            ),
+        ]
+        trees = self.builder.build_trees(events)
+        chain = _topic_chains(trees[0])[0]
+        llm_spans = [c for c in chain.children if c.span_kind == SpanKind.LLM]
+        assert len(llm_spans) == 1
+        assert llm_spans[0].llm_output == "You can get a refund within 30 days."

@@ -47,4 +47,5 @@ class SpanNode:
     knowledge_search_detected: bool = False
     is_system_topic: bool = False
     design_mode: bool = False
+    summary: Optional[str] = None
     raw_events: list[Any] = field(default_factory=list)
