@@ -63,11 +63,14 @@ Azure App Insights (customEvents) → Extraction → Reconstruction → Transfor
 
 ```
 AGENT (root, one per user-message turn)
+├── CHAIN "BotMessageReceived" (user message in, orphan → first child)
 ├── CHAIN (topic execution window, one per TopicStart/TopicEnd pair)
+│   ├── CHAIN "BotMessageReceived" (user message, if within window)
 │   ├── LLM (GenerativeAnswers event)
 │   ├── LLM (AgentStarted/AgentCompleted pair)
-│   └── TOOL (Action/TopicAction event)
-└── orphan events (outside any topic window, attached to root)
+│   ├── TOOL (Action/TopicAction event)
+│   └── CHAIN "BotMessageSend" (bot response, if within window)
+└── CHAIN "BotMessageSend" (bot response, orphan → last child)
 ```
 
 ### Configuration
