@@ -498,3 +498,68 @@ User requested comprehensive project analysis to understand full context. Analys
 3. **Optional - OpenInference completeness**: Resume Session 3 remaining steps (agent.name, tool.id, exception.type, etc.)
 4. **Optional - Production hardening**: Health checks, monitoring, structured logging, retry logic
 5. **Optional - Continuous polling test**: Run `run_loop()` against live App Insights
+
+---
+
+## Session 6 — Mar 3, 2026
+
+### What was done
+
+#### OpenInference Completeness Improvements
+1. **Implemented 6 OpenInference attribute enhancements** (completing Session 3's remaining gaps):
+
+   - **`llm.system` + `llm.provider`** on all LLM spans: `"copilot-studio"` and `"azure"` identify the orchestrator and cloud provider
+   - **`tool.id`** on TOOL spans: Maps `node.action_id` (e.g. `sendMessage_M0LuhV`) as a first-class attribute alongside `tool.name`
+   - **`summary`** field: Added to `SpanNode`, captured from `GenerativeAnswers` events, included in metadata JSON when present
+   - **`agent_outputs` parsing**: `AgentCompleted` handler now parses `agent_outputs` JSON to populate `llm_output` when no `BotMessageSend` precedes it (extracts `"Answer"` key, falls back to first string value)
+   - **`exception.type`** on error events: Error events now include both `exception.type` and `exception.message` (Copilot's `error_code_text` like `"AgentTransferFailed"` fits `exception.type` well)
+
+2. **7 new tests** (129 total, all passing):
+   - `test_llm_system_and_provider` — LLM spans have `llm.system` and `llm.provider`
+   - `test_tool_id_from_action_id` — TOOL spans have `tool.id` from `action_id`
+   - `test_tool_id_absent_when_no_action_id` — No `tool.id` when `action_id` is None
+   - `test_summary_in_metadata` — Summary included in metadata JSON
+   - `test_no_summary_when_none` — Summary absent from metadata when not set
+   - `test_agent_completed_sets_llm_output_from_agent_outputs` — AgentCompleted populates `llm_output`
+   - `test_error_event_has_exception_type` — Exception events include `exception.type`
+
+3. **Committed and pushed**: `dc8e2aa` on main
+
+#### Data Re-exports for Verification
+4. **Re-exported PG data to `pg-copilot-v3`**: 39 traces with new attributes (154 events, `--shift-to-now --include-design-mode`)
+5. **Re-exported live data to `copilot-live-test`**: 10 traces with new attributes (60 events, `--shift-to-now --include-design-mode`)
+
+#### Verification Notes
+- **`tool.id`**: Visible on SendActivity/CancelAllDialogs TOOL spans in `pg-copilot-v3` (e.g. `sendMessage_M0LuhV`, `cancelAllDialogs_01At22`)
+- **`llm.system` / `llm.provider`**: Visible on AgentCall LLM spans in `copilot-live-test`
+- **`summary`**: Not present in current PG or live data (no GenerativeAnswers events with summary field); will activate when partner data includes generative answer summaries
+- **`exception.type`**: Not present in current datasets (no error events); will activate when error data is available
+
+### Not included (by design)
+- **RETRIEVER span kind**: Copilot Studio doesn't expose knowledge retrieval details (no document lists, no retrieval scores). The `knowledge_search_detected` flag + tag is sufficient.
+- **`agent.name`**: Only candidate is the topic name prefix (e.g. `auto_agent_Y6JvM`), which is an opaque ID, not useful.
+
+### Files modified
+| File | Changes |
+|------|---------|
+| `src/reconstruction/span_models.py` | Added `summary` field |
+| `src/reconstruction/tree_builder.py` | Capture `summary` on GenerativeAnswers; parse `agent_outputs` on AgentCompleted |
+| `src/transformation/mapper.py` | Added `llm.system`, `llm.provider`, `tool.id` constants/mappings; `summary` in metadata |
+| `src/export/span_builder.py` | Added `exception.type` to error events |
+| `tests/test_transformation.py` | 5 new tests |
+| `tests/test_reconstruction.py` | 1 new test |
+| `tests/test_export.py` | 1 new test |
+
+### Current state
+- **129/129 tests passing**
+- **39 PG traces re-exported to `pg-copilot-v3`** with new attributes
+- **10 live traces re-exported to `copilot-live-test`** with new attributes
+- **Git status**: Clean (all changes committed and pushed)
+- **Latest commit**: `dc8e2aa` — feat: add OpenInference completeness improvements
+- **OpenInference coverage**: ~85% of available telemetry now mapped (up from ~70%)
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Process partner submissions** — Validate and export through the pipeline
+3. **Optional - Continuous polling test**: Run `run_loop()` against live App Insights
+4. **Optional - Production hardening**: Health checks, monitoring, structured logging, retry logic
