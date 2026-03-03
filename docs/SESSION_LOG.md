@@ -412,3 +412,89 @@ User requested comprehensive project analysis to understand full context. Analys
 4. **Optional - Partner Data Automation**: Build `partner_data_manager.py` script (Phase 2 of partner data system)
 5. **Optional - Session 3 OpenInference work**: Resume and complete remaining 6/9 steps (agent.name, tool.id, exception.type, etc.)
 6. **Optional - Production hardening**: Health checks, monitoring, structured logging, retry logic
+
+---
+
+## Session 4 — Feb 27 – Mar 2, 2026
+
+### What was done
+
+#### Partner Data Processing
+1. Processed first partner submission (PG) from Azure Portal export format
+2. Added Azure Portal export format support to `loader.py` (Azure CLI format with positional row arrays, no column metadata)
+3. Created `scripts/export_to_arize.py` for partner data export to Arize
+4. Clarified in collection guide that test/design-mode data is acceptable
+
+#### Attribute Fixes & Live Validation
+5. Fixed `tag.tags` serialization: changed from `json.dumps()` to native `list[str]` (OTel SDK supports `Sequence[str]` natively)
+6. Added `input.value`/`output.value` on LLM spans (Arize renders these in span detail panel, not `llm.input_messages.*`)
+7. Fixed flattened data format support for loader
+8. Added CLAUDE.md files for Claude Code session context
+
+#### Script Consolidation
+9. Consolidated `export_to_arize.py`, `process_partner_data.py`, and `diagnose_gaps.py` into unified `scripts/import_to_arize.py` with `--stats`, `--diagnose`, `--export`, `--shift-to-now` flags
+
+#### Repository Consolidation
+10. Major repo reorganization: consolidated from 7 top-level directories to 3 (`copilot-insights-bridge/`, `partner_data/`, `docs/`) with flat docs structure
+11. Streamlined root CLAUDE.md to reduce duplication with nested bridge CLAUDE.md
+12. Added `BRIDGE_CURSOR_PATH` to bridge README config table
+
+#### Timestamp & Export Fixes
+13. Fixed naive timestamp handling in `--shift-to-now` calculation
+14. Implemented per-tree timestamp shifting (each tree's end time shifted to now independently, preventing Arize's 2-day span detail window bug for multi-day data)
+15. Added filterable tags to exported spans
+
+### Current state
+- **116/116 tests passing**
+- **Arize UI verified**: Trace tree, span detail panel, attributes all render correctly
+- **Git status**: Clean
+- **Latest commit**: `44d74fa` — per-tree timestamp shifting and filterable tags
+- **Arize projects**: `copilot-otel-127` (production), `copilot-live-test` (testing)
+
+### Where we left off
+- Core pipeline complete and live-validated end-to-end
+- PG partner data processed and exported
+- Ready to collect more partner submissions
+
+---
+
+## Session 5 — Mar 3, 2026
+
+### What was done
+
+#### Message Span Feature
+1. **Added BotMessageReceived/BotMessageSend as CHAIN spans in the trace tree**:
+   - Previously, user/bot messages only populated `input_messages`/`output_messages` lists on parent spans — invisible in the Arize trace tree
+   - Now each message event also creates an explicit CHAIN child span, making the full conversation flow visible: user message in → processing → bot message out
+   - **In-window messages** (within a topic): CHAIN children added to the topic chain span
+   - **Orphan messages** (outside topic windows): CHAIN children added to root AGENT span (received at beginning, send at end)
+   - Existing `input_messages`/`output_messages` population preserved (no breaking changes to data)
+
+2. **Updated `_detect_knowledge_search`** to exclude message spans from "has children" check — prevents false negatives where message CHAIN spans would mask the no-children heuristic
+
+3. **Tests**: 6 new tests in `TestMessageSpanCreation`, 15 existing tests updated to use `_topic_chains()` helper instead of `children[0]` indexing, 2 end-to-end span count assertions updated. All 122 tests passing.
+
+4. **Committed and pushed**: `26f43fd` on main
+
+#### PG Data Re-export
+5. Re-exported PG partner data to new Arize project `pg-copilot-v3` with `--shift-to-now --include-design-mode`
+6. 39 traces from 154 events (9 conversations) exported successfully
+7. **Verified in Arize UI**: New message spans render correctly in trace tree, span detail panel shows `input.value`/`output.value`
+
+### Files modified
+- `src/reconstruction/tree_builder.py` — 4 edits: in-window message spans, orphan message spans, knowledge search detection fix
+- `tests/test_reconstruction.py` — `_topic_chains()` helper, 6 new tests, 15 existing test updates
+- `tests/test_end_to_end.py` — Updated span count assertions (3→5, 6→10)
+
+### Current state
+- **122/122 tests passing**
+- **39 PG traces in Arize `pg-copilot-v3`** with new message spans verified
+- **Git status**: Clean (all changes committed and pushed)
+- **Latest commit**: `26f43fd` — feat: add BotMessageReceived/BotMessageSend as CHAIN spans
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Process partner submissions** — Validate and export through the pipeline
+3. **Optional - OpenInference completeness**: Resume Session 3 remaining steps (agent.name, tool.id, exception.type, etc.)
+4. **Optional - Production hardening**: Health checks, monitoring, structured logging, retry logic
+5. **Optional - Continuous polling test**: Run `run_loop()` against live App Insights
