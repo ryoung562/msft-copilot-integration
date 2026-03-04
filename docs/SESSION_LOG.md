@@ -742,6 +742,86 @@ User requested comprehensive project analysis to understand full context. Analys
 
 ### Next steps
 1. **Collect more partner data** — Send collection guides to additional partners
-2. **Optional - Production hardening**: Health check endpoint, Prometheus metrics
+2. ~~**Optional - Production hardening**: Health check endpoint~~ → Done in Session 10
+3. **Optional - Production hardening**: Prometheus metrics
+4. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
+5. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
+
+---
+
+## Session 10 — Mar 3, 2026
+
+### What was done
+
+#### Health Check Endpoint
+1. **Added health check settings** to `BridgeSettings` (`src/config.py`):
+   - `health_check_enabled` (default `True`) — toggle via `BRIDGE_HEALTH_CHECK_ENABLED`
+   - `health_check_port` (default `8080`) — toggle via `BRIDGE_HEALTH_CHECK_PORT`
+
+2. **Created `src/health.py`** — thread-safe health state and HTTP server:
+   - **`HealthState`** dataclass with `threading.Lock`-protected fields:
+     - `last_run_at`, `last_processed_timestamp`, `events_processed_count`, `consecutive_failures`, `last_error`
+     - `record_success(cursor_state)` — updates from cursor, resets failures
+     - `record_failure(error)` — increments failures, captures error string
+     - `snapshot()` — returns point-in-time dict with computed `status` and `time_since_last_run_seconds`
+     - `is_ready()` — returns `True` after first successful cycle
+   - **Status logic**:
+     - `"healthy"` — 0 failures, has run recently
+     - `"degraded"` — 1+ failures but below threshold
+     - `"unhealthy"` — no runs yet, OR `>= max_consecutive_failures`, OR stale (no run in `3 * poll_interval`)
+   - **HTTP server** using stdlib `http.server` on a daemon thread (zero new dependencies):
+     - `GET /health` — returns JSON with 200 (healthy/degraded) or 503 (unhealthy)
+     - `GET /ready` — returns 200 after first successful cycle, 503 before (Kubernetes readiness probe)
+
+3. **Wired into `src/main.py`**:
+   - `main()` creates `HealthState`, optionally starts health server, passes state to `run_loop()`
+   - `run_loop()` accepts optional `health_state` parameter
+   - Calls `record_success()` after each successful cycle (from cursor state)
+   - Calls `record_failure()` on exceptions
+   - Local `consecutive_failures` counter preserved for backward compatibility with existing backoff logic
+
+4. **Created `tests/test_health.py`** — 12 tests:
+   - `HealthState` starts with no runs, status unhealthy
+   - `record_success` updates fields and sets status healthy
+   - `record_failure` increments failures, captures error
+   - `record_success` after failure resets consecutive_failures
+   - Status transitions: healthy → degraded → unhealthy
+   - Staleness detection (old `last_run_at` with short poll interval → unhealthy)
+   - `is_ready` false then true after first success
+   - Health HTTP endpoint returns 200 + JSON for healthy state
+   - Health HTTP endpoint returns 503 for unhealthy state
+   - Readiness endpoint returns 503 before first success, 200 after
+   - 404 for unknown paths
+
+### Health check response example
+```json
+{
+  "status": "healthy",
+  "last_run_at": "2026-03-03T10:15:42+00:00",
+  "last_processed_timestamp": "2026-03-03T10:13:42+00:00",
+  "events_processed_count": 110,
+  "consecutive_failures": 0,
+  "last_error": null,
+  "time_since_last_run_seconds": 45.2,
+  "poll_interval_seconds": 300
+}
+```
+
+### Files modified
+| File | Changes |
+|------|---------|
+| `src/config.py` | Added `health_check_enabled`, `health_check_port` settings |
+| `src/health.py` | New: `HealthState`, `_HealthHandler`, `start_health_server()` |
+| `src/main.py` | Import health module; create `HealthState` in `main()`; pass to `run_loop()`; call `record_success`/`record_failure` |
+| `tests/test_health.py` | New: 12 tests (7 unit + 5 HTTP) |
+
+### Current state
+- **156/156 tests passing** (144 existing + 12 new)
+- **Git status**: Clean (committed and pushed)
+- **Latest commit**: `44f1016` — feat: add HTTP health check endpoint for orchestrator liveness/readiness probes
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Optional - Production hardening**: Prometheus metrics
 3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
 4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
