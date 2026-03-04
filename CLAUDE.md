@@ -15,7 +15,7 @@ All commands run from `copilot-insights-bridge/`.
 pip install .
 pip install ".[dev]"      # includes pytest, ruff, mypy
 
-# Tests (116 tests)
+# Tests (156 tests)
 pytest tests/ -v
 pytest tests/test_reconstruction.py -v                    # single file
 pytest tests/test_reconstruction.py::TestClass::test_fn   # single test
@@ -70,3 +70,6 @@ Environment variables (prefix `BRIDGE_`), loaded via Pydantic `BaseSettings` in 
 - `BRIDGE_POLL_INTERVAL_MINUTES` (default: 5), `BRIDGE_INITIAL_LOOKBACK_HOURS` (default: 24)
 - `BRIDGE_EXCLUDE_DESIGN_MODE` (default: true)
 - `BRIDGE_CURSOR_PATH` (default: `.bridge_cursor.json`)
+- `BRIDGE_LOG_FORMAT` (default: `text`, or `json` for structured logging)
+- `BRIDGE_MAX_CONSECUTIVE_FAILURES` (default: 5), `BRIDGE_BACKOFF_BASE_SECONDS` (default: 60), `BRIDGE_BACKOFF_MAX_SECONDS` (default: 900)
+- `BRIDGE_HEALTH_CHECK_ENABLED` (default: true), `BRIDGE_HEALTH_CHECK_PORT` (default: 8080)

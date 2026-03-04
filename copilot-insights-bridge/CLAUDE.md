@@ -57,7 +57,9 @@ Azure App Insights (customEvents) → Extraction → Reconstruction → Transfor
 
 5. **State** (`src/state/`) — `Cursor` reads/writes a JSON high-water mark file so the poller doesn't reprocess events. Atomic writes via temp file + `os.replace()`.
 
-6. **Orchestration** (`src/main.py`) — `BridgePipeline.run_once()` executes one poll cycle; `run_loop()` polls continuously at `poll_interval_minutes`.
+6. **Orchestration** (`src/main.py`) — `BridgePipeline.run_once()` executes one poll cycle; `run_loop()` polls continuously at `poll_interval_minutes` with exponential backoff on failures.
+
+7. **Health** (`src/health.py`) — `HealthState` tracks pipeline liveness (thread-safe via `threading.Lock`). `start_health_server()` runs stdlib `http.server` on a daemon thread. `GET /health` returns JSON with 200 (healthy/degraded) or 503 (unhealthy). `GET /ready` returns 200 after first successful cycle (Kubernetes readiness probe). Status: unhealthy if no runs yet, `>= max_consecutive_failures`, or stale (`3 * poll_interval` with no run).
 
 ### Span Hierarchy
 
@@ -87,6 +89,12 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 | `BRIDGE_INITIAL_LOOKBACK_HOURS` | no | `24` |
 | `BRIDGE_EXCLUDE_DESIGN_MODE` | no | `true` |
 | `BRIDGE_CURSOR_PATH` | no | `.bridge_cursor.json` |
+| `BRIDGE_LOG_FORMAT` | no | `text` |
+| `BRIDGE_MAX_CONSECUTIVE_FAILURES` | no | `5` |
+| `BRIDGE_BACKOFF_BASE_SECONDS` | no | `60.0` |
+| `BRIDGE_BACKOFF_MAX_SECONDS` | no | `900.0` |
+| `BRIDGE_HEALTH_CHECK_ENABLED` | no | `true` |
+| `BRIDGE_HEALTH_CHECK_PORT` | no | `8080` |
 
 ## Key Technical Details
 
@@ -115,7 +123,8 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 - `src/extraction/loader.py` provides `load_events_from_file()` for auto-detecting 4 JSON formats
 - `conftest.py` provides `load_real_data_table(name)` for table-format fixtures (raw dicts)
 - Tests use `InMemorySpanExporter` to capture and assert on exported spans without hitting Arize
-- Current count: 116 tests
+- Health check tests use ephemeral port (`port=0`) to avoid conflicts
+- Current count: 156 tests
 
 ## Reference Docs
 
