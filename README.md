@@ -86,7 +86,7 @@ python scripts/import_to_arize.py data.json --export --shift-to-now
 
 ```bash
 cd copilot-insights-bridge
-pytest tests/ -v          # 116 tests
+pytest tests/ -v          # 156 tests
 ```
 
 ## Documentation
@@ -115,4 +115,3 @@ pytest tests/ -v          # 116 tests
 ### Implementation
 - File-based cursor (not safe for multi-instance deployments)
 - ~5 min latency (polling interval + ingestion lag)
-- No retry logic for failed exports
