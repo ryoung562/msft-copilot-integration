@@ -622,6 +622,73 @@ User requested comprehensive project analysis to understand full context. Analys
 
 ### Next steps
 1. **Collect more partner data** — Send collection guides to additional partners
-2. **Production hardening** — Retry logic for Azure connection drops, structured logging, health checks
+2. ~~**Production hardening** — Retry logic for Azure connection drops~~ → Done in Session 8
 3. **Optional - Error trace enrichment**: `OnErrorLog` events appear in telemetry but aren't currently handled as a distinct event type
 4. **Optional - Agent display name**: Monitor for future Copilot Studio telemetry improvements that expose friendly sub-agent names
+
+---
+
+## Session 8 — Mar 3, 2026
+
+### What was done
+
+#### Retry Logic for Azure Connection Drops
+1. **Added resilience settings to `BridgeSettings`** (`src/config.py`):
+   - `max_consecutive_failures` (default 5) — threshold for ERROR-level log escalation
+   - `backoff_base_seconds` (default 60s) — base for exponential backoff
+   - `backoff_max_seconds` (default 900s / 15 min) — backoff cap
+
+2. **Added explicit retry kwargs to `LogsQueryClient`** (`src/extraction/client.py`):
+   - `retry_total=3`, `retry_backoff_factor=0.8`, `retry_backoff_max=30`
+   - Documents intent rather than relying on invisible Azure SDK defaults
+
+3. **Wrapped `run_once()` failure points** (`src/main.py`):
+   - **`query_events`**: Azure errors propagate to `run_loop()` for cycle-level tracking
+   - **`force_flush`**: Exception swallowed (spans queued in `BatchSpanProcessor` with its own retry); timeout (returns `False`) logged as warning
+   - **`cursor.save`**: `OSError` swallowed — worst case is duplicate processing next cycle
+
+4. **Rewrote `run_loop()` with exponential backoff** (`src/main.py`):
+   - Catches all exceptions from `run_once()` (except `KeyboardInterrupt`)
+   - Tracks `consecutive_failures` counter, resets on success
+   - Exponential backoff: `base * 2^(failures-1)`, capped at `backoff_max_seconds`
+   - After `max_consecutive_failures`: escalates to ERROR with "ALERT:" prefix
+   - Shutdown `force_flush()` and `shutdown_tracer_provider()` both wrapped in try-except
+
+   | Failures | Sleep (defaults) |
+   |----------|-----------------|
+   | 1 | 60s |
+   | 2 | 120s |
+   | 3 | 240s |
+   | 4 | 480s |
+   | 5+ | 900s (capped) + ERROR log |
+
+5. **Created `tests/test_resilience.py`** — 10 new tests:
+   - `HttpResponseError` from `query_events` propagates
+   - `ServiceRequestError` (connection drop) propagates
+   - `force_flush` timeout — logs warning, cursor still advances
+   - `force_flush` exception — swallowed, cursor still advances
+   - `cursor.save` `OSError` — swallowed, `run_once` returns normally
+   - Backoff arithmetic (`base * 2^(n-1)`)
+   - Backoff capped at max
+   - Success resets backoff counter
+   - ERROR-level log escalation after threshold
+   - Shutdown `force_flush` failure doesn't crash
+
+### Files modified
+| File | Changes |
+|------|---------|
+| `src/config.py` | Added 3 resilience settings |
+| `src/extraction/client.py` | Added explicit retry kwargs to `LogsQueryClient` |
+| `src/main.py` | Added `AzureError` import; wrapped 3 failure points in `run_once()`; rewrote `run_loop()` with backoff; protected shutdown |
+| `tests/test_resilience.py` | New file: 10 tests |
+
+### Current state
+- **139/139 tests passing** (129 existing + 10 new)
+- **Git status**: Clean (committed and pushed)
+- **Latest commit**: `c17869d` — feat: add retry logic with exponential backoff for Azure connection drops
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Optional - Production hardening**: Structured logging (JSON), health check endpoint, Prometheus metrics
+3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
+4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
