@@ -689,6 +689,59 @@ User requested comprehensive project analysis to understand full context. Analys
 
 ### Next steps
 1. **Collect more partner data** — Send collection guides to additional partners
-2. **Optional - Production hardening**: Structured logging (JSON), health check endpoint, Prometheus metrics
+2. ~~**Optional - Production hardening**: Structured logging (JSON)~~ → Done in Session 9
+3. **Optional - Production hardening**: Health check endpoint, Prometheus metrics
+4. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
+5. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
+
+---
+
+## Session 9 — Mar 3, 2026
+
+### What was done
+
+#### Structured JSON Logging
+1. **Added `python-json-logger` dependency** to `pyproject.toml`
+2. **Added `log_format` setting** to `BridgeSettings` (`BRIDGE_LOG_FORMAT` env var, default `"text"`)
+3. **Created `src/logging_config.py`** — shared `configure_logging()` function:
+   - `"text"` → human-readable format (`%(asctime)s [%(levelname)s] %(name)s: %(message)s`)
+   - `"json"` → structured JSON via `pythonjsonlogger.jsonlogger.JsonFormatter` with fields: `timestamp`, `level`, `name`, `message`
+   - Idempotent: clears existing handlers before adding new one
+4. **Updated `src/main.py`** — replaced `logging.basicConfig()` with `configure_logging(fmt=settings.log_format)`
+5. **Updated `scripts/import_to_arize.py`** — replaced `logging.basicConfig()` with `configure_logging(fmt="text")` (always text for CLI scripts)
+6. **Created `tests/test_logging_config.py`** — 5 tests:
+   - Text format produces human-readable output (contains `[INFO]`)
+   - JSON format produces parseable JSON with expected keys (`timestamp`, `level`, `name`, `message`)
+   - JSON format includes `exc_info` when exception is logged
+   - Default is text format
+   - Calling `configure_logging` twice doesn't duplicate handlers
+
+#### Technical Notes
+- `python-json-logger` v2.0.7 uses import path `pythonjsonlogger.jsonlogger.JsonFormatter` (not `pythonjsonlogger.json`)
+- v2 API uses `rename_fields` parameter to map `asctime` → `timestamp` and `levelname` → `level`
+
+### Files modified
+| File | Changes |
+|------|---------|
+| `pyproject.toml` | Added `python-json-logger>=2.0.0` dependency |
+| `src/config.py` | Added `log_format` setting |
+| `src/logging_config.py` | New: `configure_logging()` function |
+| `src/main.py` | Replaced `logging.basicConfig()` with `configure_logging()` |
+| `scripts/import_to_arize.py` | Replaced `logging.basicConfig()` with `configure_logging()` |
+| `tests/test_logging_config.py` | New: 5 tests |
+
+### JSON output example
+```json
+{"timestamp": "2026-03-03 10:15:42,123", "level": "INFO", "name": "src.main", "message": "Starting bridge loop (poll every 5 min)"}
+```
+
+### Current state
+- **144/144 tests passing** (139 existing + 5 new)
+- **Git status**: Clean (committed and pushed)
+- **Latest commit**: `db2a6cf` — feat: add structured JSON logging for production log aggregation
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Optional - Production hardening**: Health check endpoint, Prometheus metrics
 3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
 4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
