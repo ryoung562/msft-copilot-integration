@@ -9,6 +9,7 @@ from azure.core.exceptions import AzureError
 
 from src.config import BridgeSettings
 from src.extraction.client import AppInsightsClient
+from src.logging_config import configure_logging
 from src.reconstruction.tree_builder import TraceTreeBuilder
 from src.transformation.mapper import OpenInferenceMapper
 from src.export.otel_exporter import create_tracer_provider, shutdown_tracer_provider
@@ -153,11 +154,8 @@ class BridgePipeline:
 
 def main() -> None:
     """Entry point: load settings and start the polling loop."""
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    )
     settings = BridgeSettings()  # type: ignore[call-arg]
+    configure_logging(fmt=settings.log_format)
     pipeline = BridgePipeline(settings)
     pipeline.run_loop()
 

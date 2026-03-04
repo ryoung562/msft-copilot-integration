@@ -25,13 +25,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.extraction.loader import load_events_from_file
 from src.extraction.models import AppInsightsEvent
+from src.logging_config import configure_logging
 from src.reconstruction.tree_builder import TraceTreeBuilder, shift_tree_timestamps
 from src.transformation.mapper import OpenInferenceMapper
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
+configure_logging(fmt="text")
 logger = logging.getLogger(__name__)
 
 

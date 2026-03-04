@@ -29,6 +29,9 @@ class BridgeSettings(BaseSettings):
     # State
     cursor_path: str = ".bridge_cursor.json"
 
+    # Logging
+    log_format: str = "text"  # "text" or "json"
+
     # Resilience
     max_consecutive_failures: int = 5
     backoff_base_seconds: float = 60.0
