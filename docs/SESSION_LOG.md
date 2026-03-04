@@ -563,3 +563,65 @@ User requested comprehensive project analysis to understand full context. Analys
 2. **Process partner submissions** — Validate and export through the pipeline
 3. **Optional - Continuous polling test**: Run `run_loop()` against live App Insights
 4. **Optional - Production hardening**: Health checks, monitoring, structured logging, retry logic
+
+---
+
+## Session 7 — Mar 3, 2026
+
+### What was done
+
+#### Arize UI Verification (continued from Session 6)
+1. **Verified `llm.system` and `llm.provider`** on AgentCall LLM span in `copilot-live-test`:
+   - `llm.system: "copilot-studio"` (line 21 in Attributes JSON)
+   - `llm.provider: "azure"` (line 20)
+   - `llm.model_name: "copilot-studio-subagent"` (correct variant for SubAgent)
+   - Screenshot captured for reference (not committed to repo)
+2. **Previously verified `tool.id`** on SendActivity TOOL span in `pg-copilot-v3`: `tool.id: "sendMessage_abmysR"`
+3. All 6 OpenInference completeness improvements from Session 6 confirmed live in Arize
+
+#### Continuous Polling Test (`run_loop()`)
+4. **Ran bridge in continuous polling mode** against live Azure App Insights:
+   - Project: `copilot-live-test`, poll interval: 1 minute
+   - Authentication: Azure CLI (`DefaultAzureCredential`)
+   - First cycle: 31 events → 3 trace trees exported (24h lookback, no cursor)
+   - Incremental: 6 events → 1 trace (user sent "howdy" at 12:59 PM, bridge picked up at 1:02 PM — ~3 min latency)
+   - Further incremental: 3 additional user questions exported successfully across subsequent cycles
+
+5. **Cursor-based resume tested**:
+   - Bridge crashed due to Azure connection drop (machine sleep/network interruption)
+   - Restarted bridge — cursor file preserved at `events_processed_count: 83`
+   - Bridge resumed from `last_processed_timestamp`, querying only new events
+   - No duplicate exports — cursor high-water mark correctly prevents reprocessing
+   - User sent another message after restart — bridge picked it up on next cycle
+
+6. **Final cursor state**: 110 events processed across all cycles
+
+#### Agent Investigation
+7. **Sub-agent span naming analysis**: User asked why sub-agent spans show opaque IDs like `auto_agent_Y6JvM.agent.Agent` instead of the friendly name "wikipedia agent" from Copilot Studio
+   - Queried raw App Insights telemetry — `AgentStarted`/`AgentCompleted` events only contain `AgentType: "SubAgent"`, no display name
+   - `TopicName` field carries the opaque ID (e.g., `auto_agent_Y6JvM.agent.Agent_9eM`) — this is the only differentiator between sub-agents
+   - **Conclusion**: Microsoft doesn't emit friendly agent names in telemetry. Current behavior is correct. Fix should come from Copilot Studio platform, not the bridge.
+
+8. **Token count analysis**: User asked how token counts are calculated
+   - Copilot Studio telemetry has **zero token usage data** — no `gen_ai.usage.*` fields on any event type
+   - Bridge has a ready-to-go passthrough mechanism (`genai_attrs` parameter) for future compatibility
+   - Any token counts visible in Arize (e.g., "18 tokens" on AgentCall) come from Arize's own token estimation, not from the bridge
+
+### Observations
+- **App Insights ingestion lag**: ~3-5 minutes from message send to event availability via API
+- **Cursor reliability**: File-based cursor survives process crashes and enables clean resume
+- **Connection resilience**: Azure SDK connection drops after extended idle periods — production hardening should add retry logic
+- **`ConnectorActionException`**: User's Copilot agent has a broken connector, but error interactions still produce telemetry (BotMessageReceived, TopicStart, OnErrorLog, BotMessageSend)
+
+### Current state
+- **129/129 tests passing**
+- **110 events processed** via continuous polling to `copilot-live-test`
+- **Git status**: Clean (no code changes in this session)
+- **Latest commit**: `39e38be` — docs: update session log with session 6
+- **Continuous polling**: Fully validated end-to-end
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Production hardening** — Retry logic for Azure connection drops, structured logging, health checks
+3. **Optional - Error trace enrichment**: `OnErrorLog` events appear in telemetry but aren't currently handled as a distinct event type
+4. **Optional - Agent display name**: Monitor for future Copilot Studio telemetry improvements that expose friendly sub-agent names
