@@ -36,3 +36,7 @@ class BridgeSettings(BaseSettings):
     max_consecutive_failures: int = 5
     backoff_base_seconds: float = 60.0
     backoff_max_seconds: float = 900.0  # 15 minutes
+
+    # Health check
+    health_check_enabled: bool = True
+    health_check_port: int = 8080

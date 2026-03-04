@@ -9,6 +9,7 @@ from azure.core.exceptions import AzureError
 
 from src.config import BridgeSettings
 from src.extraction.client import AppInsightsClient
+from src.health import HealthState, start_health_server
 from src.logging_config import configure_logging
 from src.reconstruction.tree_builder import TraceTreeBuilder
 from src.transformation.mapper import OpenInferenceMapper
@@ -106,7 +107,7 @@ class BridgePipeline:
         )
         return min(raw, self._settings.backoff_max_seconds)
 
-    def run_loop(self) -> None:
+    def run_loop(self, health_state: HealthState | None = None) -> None:
         """Continuously poll until interrupted, with exponential backoff on failures."""
         interval = self._settings.poll_interval_minutes * 60
         consecutive_failures = 0
@@ -118,11 +119,15 @@ class BridgePipeline:
                 try:
                     self.run_once()
                     consecutive_failures = 0
+                    if health_state is not None:
+                        health_state.record_success(self._cursor.load())
                     time.sleep(interval)
                 except KeyboardInterrupt:
                     raise
-                except Exception:
+                except Exception as exc:
                     consecutive_failures += 1
+                    if health_state is not None:
+                        health_state.record_failure(exc)
                     backoff = self._backoff_seconds(consecutive_failures)
                     if consecutive_failures >= self._settings.max_consecutive_failures:
                         logger.error(
@@ -156,8 +161,16 @@ def main() -> None:
     """Entry point: load settings and start the polling loop."""
     settings = BridgeSettings()  # type: ignore[call-arg]
     configure_logging(fmt=settings.log_format)
+
+    health_state = HealthState(
+        poll_interval_seconds=settings.poll_interval_minutes * 60,
+        max_consecutive_failures=settings.max_consecutive_failures,
+    )
+    if settings.health_check_enabled:
+        start_health_server(health_state, port=settings.health_check_port)
+
     pipeline = BridgePipeline(settings)
-    pipeline.run_loop()
+    pipeline.run_loop(health_state=health_state)
 
 
 if __name__ == "__main__":
