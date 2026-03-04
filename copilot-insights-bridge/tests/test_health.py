@@ -30,7 +30,6 @@ class TestHealthState:
         state = HealthState()
         now = datetime.now(timezone.utc)
         cursor = SimpleNamespace(
-            last_run_at=now,
             last_processed_timestamp=now - timedelta(minutes=2),
             events_processed_count=42,
         )
@@ -40,6 +39,8 @@ class TestHealthState:
         assert snap["events_processed_count"] == 42
         assert snap["consecutive_failures"] == 0
         assert snap["last_error"] is None
+        # last_run_at is set to ~now by record_success, not from cursor
+        assert snap["time_since_last_run_seconds"] < 2
 
     def test_record_failure_increments_and_captures_error(self):
         state = HealthState()
@@ -55,7 +56,6 @@ class TestHealthState:
 
         now = datetime.now(timezone.utc)
         cursor = SimpleNamespace(
-            last_run_at=now,
             last_processed_timestamp=now,
             events_processed_count=1,
         )
@@ -70,7 +70,6 @@ class TestHealthState:
         # Need at least one success so "no last_run" doesn't make it unhealthy
         now = datetime.now(timezone.utc)
         cursor = SimpleNamespace(
-            last_run_at=now,
             last_processed_timestamp=now,
             events_processed_count=1,
         )
@@ -90,14 +89,16 @@ class TestHealthState:
 
     def test_staleness_makes_unhealthy(self):
         state = HealthState(poll_interval_seconds=60)
-        # Simulate a run that happened long ago
         old_time = datetime.now(timezone.utc) - timedelta(minutes=10)
         cursor = SimpleNamespace(
-            last_run_at=old_time,
             last_processed_timestamp=old_time,
             events_processed_count=5,
         )
-        state.record_success(cursor)
+        # Mock datetime.now so record_success sets _last_run_at to 10 min ago
+        with patch("src.health.datetime") as mock_dt:
+            mock_dt.now.return_value = old_time
+            mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
+            state.record_success(cursor)
         # 10 minutes ago with a 60s interval → stale (> 3x interval)
         snap = state.snapshot()
         assert snap["status"] == "unhealthy"
@@ -108,7 +109,6 @@ class TestHealthState:
 
         now = datetime.now(timezone.utc)
         cursor = SimpleNamespace(
-            last_run_at=now,
             last_processed_timestamp=now,
             events_processed_count=1,
         )
@@ -147,7 +147,6 @@ class TestHealthHTTP:
         state, base_url = health_server
         now = datetime.now(timezone.utc)
         cursor = SimpleNamespace(
-            last_run_at=now,
             last_processed_timestamp=now,
             events_processed_count=10,
         )
@@ -175,7 +174,6 @@ class TestHealthHTTP:
         state, base_url = health_server
         now = datetime.now(timezone.utc)
         cursor = SimpleNamespace(
-            last_run_at=now,
             last_processed_timestamp=now,
             events_processed_count=1,
         )

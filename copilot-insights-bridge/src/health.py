@@ -35,13 +35,17 @@ class HealthState:
     def record_success(self, cursor_state: object) -> None:
         """Update state after a successful poll cycle.
 
+        ``_last_run_at`` is always set to *now* (the cycle just finished),
+        regardless of the cursor — the cursor only updates when events are
+        processed, but the health state must reflect that the loop is alive.
+
         Args:
             cursor_state: A ``CursorState`` (or any object with
-                ``last_run_at``, ``last_processed_timestamp``, and
-                ``events_processed_count`` attributes).
+                ``last_processed_timestamp`` and ``events_processed_count``
+                attributes).
         """
         with self._lock:
-            self._last_run_at = getattr(cursor_state, "last_run_at", None)
+            self._last_run_at = datetime.now(timezone.utc)
             self._last_processed_timestamp = getattr(
                 cursor_state, "last_processed_timestamp", None
             )
