@@ -28,3 +28,8 @@ class BridgeSettings(BaseSettings):
 
     # State
     cursor_path: str = ".bridge_cursor.json"
+
+    # Resilience
+    max_consecutive_failures: int = 5
+    backoff_base_seconds: float = 60.0
+    backoff_max_seconds: float = 900.0  # 15 minutes

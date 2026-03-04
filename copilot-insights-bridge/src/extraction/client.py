@@ -28,7 +28,12 @@ class AppInsightsClient:
     def __init__(self, resource_id: str) -> None:
         self._resource_id = resource_id
         self._credential = DefaultAzureCredential()
-        self._client = LogsQueryClient(self._credential)
+        self._client = LogsQueryClient(
+            self._credential,
+            retry_total=3,
+            retry_backoff_factor=0.8,
+            retry_backoff_max=30,
+        )
 
     def query_events(
         self,

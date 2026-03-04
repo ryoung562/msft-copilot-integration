@@ -1,8 +1,11 @@
 """Pipeline orchestration for the Copilot Studio to Arize AX bridge."""
 
 import logging
+import math
 import time
 from datetime import datetime, timedelta, timezone
+
+from azure.core.exceptions import AzureError
 
 from src.config import BridgeSettings
 from src.extraction.client import AppInsightsClient
@@ -48,6 +51,7 @@ class BridgePipeline:
             logger.debug("Time window is empty, skipping cycle")
             return 0
 
+        # query_events: let Azure errors propagate so run_loop() can track failures
         events = self._client.query_events(
             start_time=start_time,
             end_time=end_time,
@@ -71,34 +75,80 @@ class BridgePipeline:
             except Exception:
                 logger.exception("Failed to export tree rooted at %s", root)
 
-        self._provider.force_flush()
+        # force_flush: swallow errors — spans are queued in BatchSpanProcessor
+        # which has its own retry. Don't block cursor advancement.
+        try:
+            flushed = self._provider.force_flush()
+            if not flushed:
+                logger.warning("force_flush() timed out; spans may be delayed")
+        except Exception:
+            logger.warning("force_flush() failed; spans may be delayed", exc_info=True)
 
-        # Use the end_time of the query window as the new high-water mark so we
-        # don't re-process events that arrived during this cycle.
+        # cursor.save: swallow OSError — worst case is duplicate processing next cycle
         state.last_processed_timestamp = end_time
         state.last_run_at = now
         state.events_processed_count += len(events)
-        self._cursor.save(state)
+        try:
+            self._cursor.save(state)
+        except OSError:
+            logger.warning("Failed to save cursor; duplicates possible next cycle", exc_info=True)
 
         logger.info(
             "Cycle complete: %d events, %d trees exported", len(events), exported
         )
         return len(events)
 
+    def _backoff_seconds(self, consecutive_failures: int) -> float:
+        """Compute exponential backoff sleep duration."""
+        raw = self._settings.backoff_base_seconds * math.pow(
+            2, consecutive_failures - 1
+        )
+        return min(raw, self._settings.backoff_max_seconds)
+
     def run_loop(self) -> None:
-        """Continuously poll until interrupted."""
+        """Continuously poll until interrupted, with exponential backoff on failures."""
         interval = self._settings.poll_interval_minutes * 60
+        consecutive_failures = 0
         logger.info(
             "Starting bridge loop (poll every %d min)", self._settings.poll_interval_minutes
         )
         try:
             while True:
-                self.run_once()
-                time.sleep(interval)
+                try:
+                    self.run_once()
+                    consecutive_failures = 0
+                    time.sleep(interval)
+                except KeyboardInterrupt:
+                    raise
+                except Exception:
+                    consecutive_failures += 1
+                    backoff = self._backoff_seconds(consecutive_failures)
+                    if consecutive_failures >= self._settings.max_consecutive_failures:
+                        logger.error(
+                            "ALERT: %d consecutive failures (backoff %.0fs)",
+                            consecutive_failures,
+                            backoff,
+                            exc_info=True,
+                        )
+                    else:
+                        logger.warning(
+                            "Cycle failed (%d consecutive, backoff %.0fs)",
+                            consecutive_failures,
+                            backoff,
+                            exc_info=True,
+                        )
+                    time.sleep(backoff)
         except KeyboardInterrupt:
             logger.info("Shutting down bridge")
-            self._provider.force_flush()
-            shutdown_tracer_provider(self._provider)
+        finally:
+            try:
+                self._provider.force_flush()
+            except Exception:
+                logger.warning("Shutdown force_flush() failed", exc_info=True)
+            try:
+                shutdown_tracer_provider(self._provider)
+            except Exception:
+                logger.warning("Shutdown tracer provider failed", exc_info=True)
 
 
 def main() -> None:
