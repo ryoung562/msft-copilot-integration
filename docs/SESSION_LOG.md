@@ -815,10 +815,20 @@ User requested comprehensive project analysis to understand full context. Analys
 | `src/main.py` | Import health module; create `HealthState` in `main()`; pass to `run_loop()`; call `record_success`/`record_failure` |
 | `tests/test_health.py` | New: 12 tests (7 unit + 5 HTTP) |
 
+#### Live Validation & Bugfix
+5. **Ran bridge with health endpoint** against live App Insights (`copilot-live-test`, 1-min poll):
+   - First cycle completed, `/ready` returned `200 ready: true`
+   - **Bug found**: `/health` reported `"unhealthy"` despite successful cycles — `last_run_at` was 16 hours stale
+   - **Root cause**: `record_success()` read `last_run_at` from the cursor, but the cursor only saves `last_run_at` when events are processed. On empty cycles (no new events), `run_once()` returns early without saving, so the cursor's `last_run_at` stays at whatever it was from the previous session
+   - **Fix**: `record_success()` now sets `_last_run_at = datetime.now(timezone.utc)` unconditionally — it tracks "when did the loop last complete a cycle," not "when were events last found"
+   - After fix: `/health` returns `"healthy"` with `time_since_last_run_seconds` updating each cycle
+   - Verified across multiple consecutive cycles with 0 new events
+
 ### Current state
 - **156/156 tests passing** (144 existing + 12 new)
 - **Git status**: Clean (committed and pushed)
-- **Latest commit**: `44f1016` — feat: add HTTP health check endpoint for orchestrator liveness/readiness probes
+- **Latest commit**: `8622b6a` — fix: use current time for health last_run_at instead of cursor timestamp
+- **Health endpoint live-validated**: healthy/ready across multiple cycles
 
 ### Next steps
 1. **Collect more partner data** — Send collection guides to additional partners
