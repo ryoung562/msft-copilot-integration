@@ -1,17 +1,12 @@
 # Microsoft Copilot Studio → Arize AX Integration
 
-Bridge service that exports Microsoft Copilot Studio telemetry from Azure Application Insights to Arize AX as OpenTelemetry/OpenInference spans for AI observability.
+Export Microsoft Copilot Studio telemetry to Arize AX as OpenTelemetry/OpenInference spans for AI observability.
 
 ## What This Does
 
 **Problem**: Microsoft Copilot Studio agents only export telemetry to Azure Application Insights. Arize AX requires OpenTelemetry/OTLP format with OpenInference semantic conventions.
 
-**Solution**: A polling-based bridge service that:
-
-1. **Queries** Azure Application Insights for Copilot Studio events via REST API
-2. **Reconstructs** hierarchical conversation traces from flat event streams
-3. **Transforms** to OpenInference-formatted OpenTelemetry spans
-4. **Exports** to Arize AX via OTLP/gRPC for AI observability
+**Solution**: Two approaches to get Copilot Studio data into Arize AX — both share the same reconstruction and export pipeline:
 
 ```
 ┌─────────────────────┐
@@ -22,17 +17,15 @@ Bridge service that exports Microsoft Copilot Studio telemetry from Azure Applic
 ┌─────────────────────┐
 │ Azure App Insights  │
 │  (customEvents)     │
-└──────────┬──────────┘
-           │ Query (5min poll)
-           ▼
-┌─────────────────────┐      ┌─────────────────────┐
-│  Bridge Service     │──────▶│     Arize AX        │
-│  - Reconstruct      │ OTLP  │  (Observability)    │
-│  - Transform        │       │                     │
-│  - Export           │       │  - Traces           │
-└─────────────────────┘       │  - Sessions         │
-                              │  - Evaluations      │
-                              └─────────────────────┘
+└──────┬────────┬─────┘
+       │        │
+   ┌───┘        └──────────────┐
+   │ Export JSON               │ REST API (5-min poll)
+   ▼                           ▼
+┌──────────────┐     ┌──────────────────┐      ┌─────────────────┐
+│ Import Script│     │  Bridge Service  │──────▶│    Arize AX     │
+│ (one-time)   │────▶│  (continuous)    │ OTLP  │ (Observability) │
+└──────────────┘     └──────────────────┘       └─────────────────┘
 ```
 
 ## Project Structure
@@ -48,52 +41,50 @@ msft-copilot-integration/
 
 ## Getting Started
 
-### Prerequisites
+### Approach 1: File Export & Import
 
-- Python 3.12+
-- Azure subscription with Application Insights
-- Copilot Studio agent configured to send telemetry to App Insights
-- Arize AX account with API key
-- Azure CLI (`az login`)
-
-### Installation
+Best for one-time analysis, partner data, or when you don't need Azure API access.
 
 ```bash
 cd copilot-insights-bridge
 pip install .
+cp .env.example .env          # Add your Arize credentials
 
-# Configure environment
-cp .env.development.example .env
-# Edit .env with your Azure and Arize credentials
-
-# Run the bridge
-python -m src.main
-```
-
-### Processing Data Files
-
-```bash
-cd copilot-insights-bridge
-
-# Inspect a data file (stats + diagnostics)
+# Inspect a data file
 python scripts/import_to_arize.py data.json
 
 # Export to Arize
+source .env
 python scripts/import_to_arize.py data.json --export --shift-to-now
 ```
+
+### Approach 2: Continuous Bridge Service
+
+Best for ongoing production monitoring with automated polling.
+
+```bash
+cd copilot-insights-bridge
+pip install .
+cp .env.bridge.example .env   # Add your Azure + Arize credentials
+
+source .env
+python -m src.main
+```
+
+See [copilot-insights-bridge/README.md](copilot-insights-bridge/README.md) for full documentation of both approaches.
 
 ## Testing
 
 ```bash
 cd copilot-insights-bridge
-pytest tests/ -v          # 156 tests
+pytest tests/ -v          # 168 tests
 ```
 
 ## Documentation
 
+- **[Full README](copilot-insights-bridge/README.md)** — Both approaches, configuration, troubleshooting
 - **[Architecture & Design](copilot-insights-bridge/PLAN.md)** — Implementation plan and decisions
 - **[Data Schemas](copilot-insights-bridge/DATA_SCHEMA.md)** — Event structures and mappings
-- **[Azure Setup Guide](docs/azure-config-guide.md)** — Azure configuration steps
 - **[Collection Guide](partner_data/guides/PARTNER_DATA_COLLECTION_GUIDE.md)** — Send this to partners
 - **[Research Documents](docs/)** — Background research and specifications
 

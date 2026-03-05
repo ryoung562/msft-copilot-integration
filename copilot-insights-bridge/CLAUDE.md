@@ -77,7 +77,11 @@ AGENT (root, one per user-message turn)
 
 ### Configuration
 
-All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in `src/config.py`:
+Two settings classes in `src/config.py`:
+- `ArizeSettings` — Arize-only credentials (used by both import script and bridge)
+- `BridgeSettings(ArizeSettings)` — Adds Azure + polling config (bridge service only)
+
+All env vars use `BRIDGE_` prefix:
 
 | Variable | Required | Default |
 |----------|----------|---------|

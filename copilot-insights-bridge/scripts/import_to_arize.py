@@ -208,11 +208,11 @@ def export_trees(trees: list, shift_to_now: bool) -> None:
 
     load_dotenv()
 
-    from src.config import BridgeSettings
+    from src.config import ArizeSettings
     from src.export.otel_exporter import create_tracer_provider, shutdown_tracer_provider
     from src.export.span_builder import SpanBuilder
 
-    settings = BridgeSettings()  # type: ignore[call-arg]
+    settings = ArizeSettings()  # type: ignore[call-arg]
 
     # Optionally shift timestamps so every trace ends near "now".
     # Arize's span detail panel queries a narrow 2-day window around each

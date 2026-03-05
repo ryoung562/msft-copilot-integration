@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A bridge service (`copilot-insights-bridge/`) that pulls Microsoft Copilot Studio telemetry from Azure Application Insights and exports it to Arize AX as OpenTelemetry/OpenInference spans. The core pipeline is complete and live-validated.
+Two approaches for getting Microsoft Copilot Studio telemetry into Arize AX as OpenTelemetry/OpenInference spans. Both share the same reconstruction and export pipeline (`copilot-insights-bridge/`). The core pipeline is complete and live-validated.
 
 ## Commands
 
@@ -24,22 +24,22 @@ pytest tests/test_reconstruction.py::TestClass::test_fn   # single test
 ruff check src/ tests/
 mypy src/
 
-# Continuous polling (requires .env with Azure/Arize creds)
-python -m src.main
-
-# File import — two scripts:
+# Approach 1: File export & import (requires only BRIDGE_ARIZE_* env vars)
 python scripts/import_to_arize.py data.json                          # inspect (stats + diagnostics)
 python scripts/import_to_arize.py data.json --export --shift-to-now  # export to Arize
 python scripts/diagnose_gaps.py live_data_dump.json                  # detailed per-span analysis
+
+# Approach 2: Continuous bridge service (requires full .env with Azure + Arize creds)
+python -m src.main
 ```
 
 ## Architecture
 
 See `copilot-insights-bridge/CLAUDE.md` for detailed architecture, span hierarchy, configuration table, and technical gotchas.
 
-Two entry points:
-- **`src/main.py`** — Continuous polling from Azure App Insights (production use)
-- **`scripts/import_to_arize.py`** — Universal file import with `--stats`, `--diagnose`, `--export`, `--shift-to-now`
+Two approaches, same pipeline:
+- **File import** (`scripts/import_to_arize.py`) — Load JSON files, reconstruct, export. Uses `ArizeSettings` (Arize creds only).
+- **Continuous bridge** (`src/main.py`) — Poll Azure App Insights, reconstruct, export. Uses `BridgeSettings` (Arize + Azure creds).
 
 Pipeline: `extraction/ → reconstruction/ → transformation/ → export/`
 

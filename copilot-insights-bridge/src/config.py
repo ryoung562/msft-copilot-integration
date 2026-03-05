@@ -3,21 +3,28 @@
 from pydantic_settings import BaseSettings
 
 
-class BridgeSettings(BaseSettings):
-    """Configuration for the Copilot Studio → Arize AX bridge.
+class ArizeSettings(BaseSettings):
+    """Arize-only settings used by both the bridge service and import script.
 
     All settings are loaded from environment variables with the ``BRIDGE_`` prefix.
     """
 
     model_config = {"env_prefix": "BRIDGE_"}
 
-    # Azure Application Insights
-    appinsights_resource_id: str
-
     # Arize AX OTLP destination
     arize_space_id: str
     arize_api_key: str
     arize_project_name: str = "copilot-studio"
+
+
+class BridgeSettings(ArizeSettings):
+    """Full settings for the continuous bridge service (adds Azure + polling config).
+
+    Inherits Arize credentials from :class:`ArizeSettings`.
+    """
+
+    # Azure Application Insights
+    appinsights_resource_id: str
 
     # Polling
     poll_interval_minutes: int = 5
