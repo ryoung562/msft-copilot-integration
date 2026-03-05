@@ -897,3 +897,73 @@ User requested comprehensive project analysis to understand full context. Analys
 2. **Optional - Production hardening**: Prometheus metrics
 3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
 4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
+
+---
+
+## Session 12 — Mar 5, 2026
+
+### What was done
+
+#### Repo Restructuring for Two Approaches
+Restructured the repo so that the file import path and the continuous bridge service are presented as equal first-class approaches, instead of burying the import script as a secondary utility.
+
+1. **Extracted `ArizeSettings` base class** (`src/config.py`):
+   - New `ArizeSettings` class with just the 3 Arize credential fields (`arize_space_id`, `arize_api_key`, `arize_project_name`)
+   - `BridgeSettings` now inherits from `ArizeSettings` (adds Azure + polling + resilience + buffer + health config)
+   - Import script no longer requires `BRIDGE_APPINSIGHTS_RESOURCE_ID` — only needs Arize credentials
+
+2. **Updated `scripts/import_to_arize.py`**:
+   - Changed `from src.config import BridgeSettings` → `from src.config import ArizeSettings`
+   - Uses `ArizeSettings()` instead of `BridgeSettings()` — 3 lines changed
+
+3. **Restructured `.env` examples**:
+   - **`.env.example`** — Simplified to 3 Arize-only vars (works for both approaches)
+   - **`.env.bridge.example`** — New file with all `BridgeSettings` fields, accurate defaults, and inline comments
+   - **Deleted `.env.development.example`** — Stale (referenced non-existent `BRIDGE_INGESTION_LAG_BUFFER_MINUTES`, `BRIDGE_BATCH_SIZE`, `BRIDGE_AZURE_CREDENTIAL`)
+   - **Deleted `.env.production.example`** — Stale (same vars, plus outdated checklist mentioning unimplemented health endpoint)
+
+4. **Rewrote `copilot-insights-bridge/README.md`**:
+   - "Choose Your Approach" comparison table (file import vs bridge)
+   - Approach 1: File Export & Import — prerequisites, quick start, supported formats, command reference
+   - Approach 2: Continuous Bridge Service — prerequisites, quick start (standalone + Docker), full config table, health checks, resilience
+   - Shared sections: pipeline diagram, span hierarchy, development, extending, known limitations, troubleshooting
+
+5. **Updated root `README.md`**:
+   - Architecture diagram showing both data flow paths (export JSON + REST API polling)
+   - "Getting Started" with both approaches and links to inner README
+
+6. **Updated `copilot-insights-bridge/CLAUDE.md`**:
+   - Configuration section documents both `ArizeSettings` and `BridgeSettings(ArizeSettings)`
+
+7. **Updated root `CLAUDE.md`**:
+   - Reframed "two entry points" as "two approaches, same pipeline" with settings class references
+
+### Files modified
+| File | Change |
+|------|--------|
+| `src/config.py` | Added `ArizeSettings` base class; `BridgeSettings` inherits from it |
+| `scripts/import_to_arize.py` | Use `ArizeSettings` instead of `BridgeSettings` (3 lines) |
+| `copilot-insights-bridge/README.md` | Complete rewrite (both approaches as first-class) |
+| `.env.example` | Simplified to Arize-only (3 vars) |
+| `.env.bridge.example` | New: full bridge config with all settings and comments |
+| `.env.development.example` | Deleted (stale) |
+| `.env.production.example` | Deleted (stale) |
+| `README.md` (root) | Updated for both approaches with dual-path diagram |
+| `copilot-insights-bridge/CLAUDE.md` | Updated config section framing |
+| `CLAUDE.md` (root) | Updated architecture section framing |
+
+### Verification
+- **168/168 tests passing** — no regressions
+- **Import script works with Arize-only env vars** — confirmed `--stats` runs without `BRIDGE_APPINSIGHTS_RESOURCE_ID`
+- **`ruff check` clean** on changed files
+
+### Current state
+- **168/168 tests passing**
+- **Git status**: Clean (committed and pushed)
+- **Latest commit**: `d7006bc` — refactor: restructure repo to present file import and bridge as equal approaches
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Optional - Production hardening**: Prometheus metrics
+3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
+4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
