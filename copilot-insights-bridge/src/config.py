@@ -37,6 +37,9 @@ class BridgeSettings(BaseSettings):
     backoff_base_seconds: float = 60.0
     backoff_max_seconds: float = 900.0  # 15 minutes
 
+    # Event buffer
+    buffer_grace_seconds: int = 0  # 0 = disabled (immediate export)
+
     # Health check
     health_check_enabled: bool = True
     health_check_port: int = 8080
