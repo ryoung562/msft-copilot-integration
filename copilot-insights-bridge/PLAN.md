@@ -38,19 +38,22 @@ copilot-insights-bridge/
 ├── README.md                          # Setup guide, architecture, configuration docs
 │
 ├── scripts/
-│   ├── diagnose_gaps.py               # Offline diagnostic — reports on gap-analysis flags
-│   └── export_to_arize.py             # Export a data dump to Arize AX
+│   ├── import_to_arize.py             # Universal import: --stats, --diagnose, --export, --shift-to-now
+│   └── diagnose_gaps.py               # Offline diagnostic — detailed per-span gap analysis
 │
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                      # Pydantic settings (env vars)
-│   ├── main.py                        # Standalone entry point (poll loop)
+│   ├── main.py                        # Pipeline orchestration (poll loop + event buffer)
+│   ├── health.py                      # Health check HTTP server (liveness + readiness)
+│   ├── logging_config.py              # Structured logging (text or JSON)
 │   │
 │   ├── extraction/
 │   │   ├── __init__.py
 │   │   ├── client.py                  # App Insights query client (azure-monitor-query SDK)
 │   │   ├── queries.py                 # KQL query definitions
-│   │   └── models.py                  # Pydantic models for raw App Insights rows
+│   │   ├── models.py                  # Pydantic models for raw App Insights rows
+│   │   └── loader.py                  # Auto-detect and load 4 JSON formats from files
 │   │
 │   ├── reconstruction/
 │   │   ├── __init__.py
@@ -84,7 +87,12 @@ copilot-insights-bridge/
     ├── test_transformation.py
     ├── test_export.py
     ├── test_cursor.py
-    └── test_end_to_end.py
+    ├── test_end_to_end.py
+    ├── test_resilience.py
+    ├── test_logging_config.py
+    ├── test_health.py
+    ├── test_buffer.py
+    └── test_import.py
 ```
 
 ---
@@ -102,6 +110,12 @@ copilot-insights-bridge/
   - `BRIDGE_POLL_INTERVAL_MINUTES` (default: 5)
   - `BRIDGE_EXCLUDE_DESIGN_MODE` (default: true)
   - `BRIDGE_INITIAL_LOOKBACK_HOURS` (default: 24)
+  - `BRIDGE_CURSOR_PATH` (default: `.bridge_cursor.json`)
+  - `BRIDGE_LOG_FORMAT` (default: `text`, or `json` for structured logging)
+  - `BRIDGE_MAX_CONSECUTIVE_FAILURES` (default: 5) — triggers ALERT-level logging
+  - `BRIDGE_BACKOFF_BASE_SECONDS` (default: 60), `BRIDGE_BACKOFF_MAX_SECONDS` (default: 900)
+  - `BRIDGE_BUFFER_GRACE_SECONDS` (default: 0) — event buffer grace period; 0 = disabled
+  - `BRIDGE_HEALTH_CHECK_ENABLED` (default: true), `BRIDGE_HEALTH_CHECK_PORT` (default: 8080)
 
 ### Step 2: Data extraction from Application Insights
 **Files**: `src/extraction/client.py`, `src/extraction/queries.py`, `src/extraction/models.py`
@@ -193,14 +207,38 @@ Creates OTel spans from historical data (not live instrumentation). Sets explici
 - Safety buffer: `end_time = now() - 2 minutes` for App Insights ingestion lag
 
 ### Step 7: Pipeline orchestration and entry points
-**File**: `src/main.py`
+**Files**: `src/main.py`, `src/health.py`, `src/logging_config.py`
 **Status**: COMPLETE
 
 - `BridgePipeline` class wires: extraction → reconstruction → transformation → export → cursor update
-- `run_once()`: single poll cycle
-- `run_loop()`: continuous loop with `poll_interval_minutes` sleep
+- `run_once()`: single poll cycle with event buffer support
+- `run_loop()`: continuous loop with `poll_interval_minutes` sleep, exponential backoff on failures
 - Error handling: catch exceptions per-trace (one bad conversation doesn't block the batch)
-- Graceful shutdown: `tracer_provider.force_flush()` + `shutdown()`
+- Graceful shutdown: `_flush_buffer()` + `tracer_provider.force_flush()` + `shutdown()`
+
+**Resilience** (added Session 9):
+- Exponential backoff on Azure connection drops: base 60s, cap 900s, doubles per consecutive failure
+- ALERT-level logging after `max_consecutive_failures` (default: 5)
+- Failure counter resets on success
+
+**Event buffer** (added Session 11):
+- When `buffer_grace_seconds > 0`, events accumulate in-memory per `conversation_id`
+- Events only exported once `(now - first_seen) >= grace_seconds` — merges late arrivals into single traces
+- Cursor held back to `min(buffered timestamps) - 1μs` for crash safety
+- Dedup keys `(timestamp, name, conversation_id)` prevent double-counting on overlapping query windows
+- `_flush_buffer()` exports everything on shutdown regardless of grace
+- When `buffer_grace_seconds = 0` (default), all events are immediately mature — zero behavioral change
+
+**Structured logging** (added Session 9):
+- `BRIDGE_LOG_FORMAT=json` for production log aggregation (JSON lines)
+- `BRIDGE_LOG_FORMAT=text` (default) for human-readable console output
+
+**Health check** (added Session 10):
+- `HealthState` tracks pipeline liveness (thread-safe via `threading.Lock`)
+- `start_health_server()` runs stdlib `http.server` on a daemon thread
+- `GET /health` returns JSON with 200 (healthy/degraded) or 503 (unhealthy)
+- `GET /ready` returns 200 after first successful cycle (Kubernetes readiness probe)
+- Unhealthy if: no runs yet, `>= max_consecutive_failures`, or stale (`3 × poll_interval` with no run)
 
 ### Step 8: Docker container
 **File**: `Dockerfile`
@@ -208,7 +246,7 @@ Creates OTel spans from historical data (not live instrumentation). Sets explici
 
 ### Step 9: Test fixtures and unit tests
 **Files**: `tests/fixtures/*.json`, `tests/test_*.py`
-**Status**: COMPLETE — 98/98 passing
+**Status**: COMPLETE — 168/168 passing
 
 - Fixtures: Synthetic App Insights response JSON + real data dumps (single conversation, multi-topic, generative answers, error cases, live msteams data)
 - Extraction tests: Mock LogsQueryClient, verify Pydantic model parsing (10 tests)
@@ -217,6 +255,11 @@ Creates OTel spans from historical data (not live instrumentation). Sets explici
 - Export tests: Use InMemorySpanExporter to capture spans, assert hierarchy (8 tests)
 - Cursor tests: File-based cursor CRUD (5 tests)
 - End-to-end test: Full pipeline with mocked App Insights + InMemorySpanExporter (4 tests)
+- Resilience tests: Exponential backoff, failure counter reset, max failures alerting (6 tests)
+- Logging tests: JSON vs text format, log level configuration (4 tests)
+- Health check tests: Liveness, readiness, degraded/unhealthy states, ephemeral ports (10 tests)
+- Buffer tests: Grace period buffering, cross-cycle merge, dedup, cursor safety, flush on shutdown (12 tests)
+- Import script tests: File loading, stats, diagnostics, export modes (10 tests)
 
 ### Step 10: Documentation
 **File**: `README.md`
@@ -250,14 +293,31 @@ Creates OTel spans from historical data (not live instrumentation). Sets explici
 
 ## Verification Plan
 
-1. Unit tests pass: `pytest tests/` — all fixture-based tests green (**DONE** — 98/98)
+1. Unit tests pass: `pytest tests/` — all fixture-based tests green (**DONE** — 168/168)
 2. Linting/types: `ruff check src/` + `mypy src/` clean
 3. Docker build: `docker build -t copilot-insights-bridge .` succeeds
 4. Standalone dry run: Run `python -m src.main` with mock mode to verify pipeline wiring
-5. Live validation (**DONE**):
+5. Live validation — file import (**DONE**):
    - Configured Copilot Studio agent with App Insights (**DONE**)
    - Ran test conversations on msteams channel (**DONE**)
    - Pulled 60 live events, ran diagnostic script (**DONE**)
    - Exported 10 traces to Arize AX project `copilot-studio` (**DONE**)
    - Validated: root AGENT spans, CHAIN children for topics, LLM spans for agents, TOOL spans for actions (**DONE**)
    - Verified new metadata: knowledge_search, system_topic, topic_type, locale (**DONE**)
+6. Live validation — continuous polling (**DONE**, Session 8):
+   - `run_loop()` tested end-to-end against live App Insights → Arize (**DONE**)
+   - Cursor resume works: process crash → restart → no duplicates (**DONE**)
+   - 110 events processed via live polling over multiple sessions (**DONE**)
+7. Live validation — resilience (**DONE**, Session 9):
+   - Azure connection drop recovery with exponential backoff (**DONE**)
+   - Structured JSON logging validated (**DONE**)
+8. Live validation — health check (**DONE**, Session 10):
+   - `GET /health` returns 200 JSON with last_run_at, cursor, consecutive_failures (**DONE**)
+   - `GET /ready` returns 503 before first run, 200 after (**DONE**)
+9. Live validation — event buffer (**DONE**, Session 11):
+   - Cross-cycle merge: events from same turn across multiple cycles → single trace (**DONE**)
+   - Grace period maturity: events held for 90s, exported as batch (**DONE**)
+   - Mixed maturity: mature conversations exported while pending ones buffered (**DONE**)
+10. Partner data validation (**DONE**, Session 11):
+    - PG data (154 events) exported to `pg-copilot-test` project — 39 traces, 174 spans (**DONE**)
+    - Inputs/outputs rendering correctly in Arize UI (**DONE**)
