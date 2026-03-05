@@ -835,3 +835,65 @@ User requested comprehensive project analysis to understand full context. Analys
 2. **Optional - Production hardening**: Prometheus metrics
 3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
 4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements
+
+---
+
+## Session 11 — Mar 4-5, 2026
+
+### What was done
+
+#### Event Buffer with Grace Period
+1. **Problem**: Events from a single Copilot Studio conversation turn can arrive in App Insights across multiple poll cycles due to variable ingestion lag (~1-5 min). Without buffering, a late-arriving `BotMessageSend` gets its own trace instead of merging with the `BotMessageReceived` + topic events from the previous cycle. Observed live: a single question produced two separate traces in Arize.
+
+2. **Added `buffer_grace_seconds` setting** to `BridgeSettings` (`src/config.py`):
+   - `BRIDGE_BUFFER_GRACE_SECONDS` env var, default `0` (disabled — backward compatible)
+
+3. **Rewrote `BridgePipeline.run_once()`** with buffer logic (`src/main.py`):
+   - **3 new instance variables**: `_event_buffer` (events keyed by `conversation_id`), `_buffer_first_seen` (UTC when each conversation first appeared), `_seen_event_keys` (dedup set)
+   - **New flow**: query events → dedup against seen keys → buffer by `conversation_id` → only export conversations whose grace period has elapsed → advance cursor safely
+   - **Cursor safety**: When buffer still has events, cursor advances to `min(buffered timestamps) - 1μs` so a crash re-queries them. When buffer is empty, cursor advances to `end_time` (normal)
+   - **Dedup**: Key is `(timestamp_isoformat, name, conversation_id)`. Prevents double-counting when overlapping query windows return the same event
+   - **Memory cleanup**: Seen keys for exported conversations are removed to prevent unbounded growth
+
+4. **Added `_flush_buffer()` method**: Exports ALL buffered events regardless of grace period. Called during shutdown (`run_loop()` finally block) to avoid losing data.
+
+5. **Added `_event_dedup_key()` module-level function**: Returns `(timestamp, name, conversation_id)` tuple for dedup.
+
+6. **Created `tests/test_buffer.py`** — 12 tests across 5 test classes:
+   - `TestGraceZeroBackwardCompat` (3 tests) — grace=0 exports immediately, cursor advances normally
+   - `TestGracePeriodBuffering` (3 tests) — events held during grace, exported after, cross-cycle merge verified
+   - `TestDedup` (1 test) — overlapping query window doesn't duplicate events
+   - `TestCursorSafety` (2 tests) — cursor held back before buffered events, advances fully when buffer empty
+   - `TestFlushBuffer` (3 tests) — flush exports all, empty flush is no-op, run_loop calls flush on shutdown
+
+#### Live Validation
+7. **Ran bridge with `BRIDGE_BUFFER_GRACE_SECONDS=90`** against live App Insights (`copilot-live-test`, 1-min poll):
+   - **First test (2 messages ~1 min apart)**:
+     - 15:25:04 — 6 events arrived, buffered (grace timer starts)
+     - 15:26:05 — 8 more events arrived for same conversation, dedup kept only new ones (14 total in buffer)
+     - 15:27:06 — Grace elapsed → all 14 events exported together → 2 trees (one per turn)
+     - Without buffer, those 6+8 events would have produced separate traces with split turns
+   - **Second test ("hello from la")**:
+     - 5 events buffered, held across 2 cycles (dedup working on re-queried events), exported as 1 tree after grace
+   - **Third test (multiple messages)**:
+     - 28 events accumulated across cycles, exported as 4 trees
+     - Mixed maturity: 1 conversation exported while another still buffered, cursor held back correctly
+
+### Files modified
+| File | Changes |
+|------|---------|
+| `src/config.py` | Added `buffer_grace_seconds` setting |
+| `src/main.py` | Added `_event_dedup_key()`; added buffer state to `__init__`; rewrote `run_once()` with buffer/dedup/grace logic; added `_flush_buffer()`; updated `run_loop()` finally block |
+| `tests/test_buffer.py` | New: 12 tests |
+
+### Current state
+- **168/168 tests passing** (156 existing + 12 new)
+- **Live-validated**: Buffer merges cross-cycle events correctly with 90s grace period
+- **Git status**: Clean (committed and pushed)
+- **Latest commit**: `918eb18` — feat: add event buffer with configurable grace period to merge cross-cycle events
+
+### Next steps
+1. **Collect more partner data** — Send collection guides to additional partners
+2. **Optional - Production hardening**: Prometheus metrics
+3. **Optional - Error trace enrichment**: `OnErrorLog` events as distinct event type
+4. **Optional - Agent display name**: Monitor for Copilot Studio telemetry improvements

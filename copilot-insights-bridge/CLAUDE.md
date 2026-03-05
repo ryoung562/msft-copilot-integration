@@ -57,7 +57,7 @@ Azure App Insights (customEvents) → Extraction → Reconstruction → Transfor
 
 5. **State** (`src/state/`) — `Cursor` reads/writes a JSON high-water mark file so the poller doesn't reprocess events. Atomic writes via temp file + `os.replace()`.
 
-6. **Orchestration** (`src/main.py`) — `BridgePipeline.run_once()` executes one poll cycle; `run_loop()` polls continuously at `poll_interval_minutes` with exponential backoff on failures.
+6. **Orchestration** (`src/main.py`) — `BridgePipeline.run_once()` executes one poll cycle; `run_loop()` polls continuously at `poll_interval_minutes` with exponential backoff on failures. When `buffer_grace_seconds > 0`, events are accumulated in an in-memory buffer keyed by `conversation_id` and only exported once the grace period elapses, allowing late-arriving events from the same turn to merge into a single trace.
 
 7. **Health** (`src/health.py`) — `HealthState` tracks pipeline liveness (thread-safe via `threading.Lock`). `start_health_server()` runs stdlib `http.server` on a daemon thread. `GET /health` returns JSON with 200 (healthy/degraded) or 503 (unhealthy). `GET /ready` returns 200 after first successful cycle (Kubernetes readiness probe). Status: unhealthy if no runs yet, `>= max_consecutive_failures`, or stale (`3 * poll_interval` with no run).
 
@@ -93,6 +93,7 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 | `BRIDGE_MAX_CONSECUTIVE_FAILURES` | no | `5` |
 | `BRIDGE_BACKOFF_BASE_SECONDS` | no | `60.0` |
 | `BRIDGE_BACKOFF_MAX_SECONDS` | no | `900.0` |
+| `BRIDGE_BUFFER_GRACE_SECONDS` | no | `0` |
 | `BRIDGE_HEALTH_CHECK_ENABLED` | no | `true` |
 | `BRIDGE_HEALTH_CHECK_PORT` | no | `8080` |
 
@@ -114,6 +115,8 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 
 - **`shift_tree_timestamps()`** in `src/reconstruction/tree_builder.py` is the shared function for recursively offsetting all span times in a tree. Used by `scripts/import_to_arize.py --shift-to-now`.
 
+- **Event buffer**: When `buffer_grace_seconds > 0`, events are held in memory per `conversation_id` until the grace period elapses. This prevents cross-cycle trace splitting when App Insights delivers events from a single turn across multiple poll cycles. Cursor advancement is held back to `min(buffered timestamps) - 1μs` so a crash re-queries buffered events. Dedup keys `(timestamp, name, conversation_id)` prevent double-counting on overlapping query windows. `_flush_buffer()` exports everything on shutdown.
+
 - **OTel SDK import**: `InMemorySpanExporter` is at `opentelemetry.sdk.trace.export.in_memory_span_exporter` (not `.in_memory`) on this machine.
 
 ## Test Patterns
@@ -124,7 +127,7 @@ All env vars use `BRIDGE_` prefix, loaded via `BridgeSettings(BaseSettings)` in 
 - `conftest.py` provides `load_real_data_table(name)` for table-format fixtures (raw dicts)
 - Tests use `InMemorySpanExporter` to capture and assert on exported spans without hitting Arize
 - Health check tests use ephemeral port (`port=0`) to avoid conflicts
-- Current count: 156 tests
+- Current count: 168 tests
 
 ## Reference Docs
 
