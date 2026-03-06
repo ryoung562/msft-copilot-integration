@@ -100,13 +100,16 @@ copilot-insights-bridge/
 ## Implementation Steps
 
 ### Step 1: Project scaffolding and configuration
-**Files**: `pyproject.toml`, `.env.example`, `src/config.py`
+**Files**: `pyproject.toml`, `.env.example`, `.env.bridge.example`, `src/config.py`
 **Status**: COMPLETE
 
 - Dependencies: azure-monitor-query, azure-identity, opentelemetry-api/sdk/exporter-otlp-proto-grpc, openinference-semantic-conventions, pydantic/pydantic-settings
+- Two settings classes (split in Session 12):
+  - `ArizeSettings` — Base class with Arize-only credentials (used by both import script and bridge)
+  - `BridgeSettings(ArizeSettings)` — Adds Azure + polling + resilience + buffer + health config (bridge only)
 - Configuration via environment variables with `BRIDGE_` prefix:
-  - `BRIDGE_APPINSIGHTS_RESOURCE_ID` — Azure resource ID for App Insights
-  - `BRIDGE_ARIZE_SPACE_ID`, `BRIDGE_ARIZE_API_KEY`, `BRIDGE_ARIZE_PROJECT_NAME`
+  - `BRIDGE_ARIZE_SPACE_ID`, `BRIDGE_ARIZE_API_KEY`, `BRIDGE_ARIZE_PROJECT_NAME` (ArizeSettings)
+  - `BRIDGE_APPINSIGHTS_RESOURCE_ID` — Azure resource ID for App Insights (BridgeSettings only)
   - `BRIDGE_POLL_INTERVAL_MINUTES` (default: 5)
   - `BRIDGE_EXCLUDE_DESIGN_MODE` (default: true)
   - `BRIDGE_INITIAL_LOOKBACK_HOURS` (default: 24)
@@ -116,6 +119,9 @@ copilot-insights-bridge/
   - `BRIDGE_BACKOFF_BASE_SECONDS` (default: 60), `BRIDGE_BACKOFF_MAX_SECONDS` (default: 900)
   - `BRIDGE_BUFFER_GRACE_SECONDS` (default: 0) — event buffer grace period; 0 = disabled
   - `BRIDGE_HEALTH_CHECK_ENABLED` (default: true), `BRIDGE_HEALTH_CHECK_PORT` (default: 8080)
+- Env examples (restructured in Session 12):
+  - `.env.example` — Arize-only (3 vars, works for both approaches)
+  - `.env.bridge.example` — Full bridge config with all settings and comments
 
 ### Step 2: Data extraction from Application Insights
 **Files**: `src/extraction/client.py`, `src/extraction/queries.py`, `src/extraction/models.py`
@@ -321,3 +327,9 @@ Creates OTel spans from historical data (not live instrumentation). Sets explici
 10. Partner data validation (**DONE**, Session 11):
     - PG data (154 events) exported to `pg-copilot-test` project — 39 traces, 174 spans (**DONE**)
     - Inputs/outputs rendering correctly in Arize UI (**DONE**)
+11. Repo restructuring (**DONE**, Session 12):
+    - Extracted `ArizeSettings` base class — import script no longer requires Azure creds (**DONE**)
+    - Restructured `.env` examples — Arize-only `.env.example` + full `.env.bridge.example` (**DONE**)
+    - Deleted stale `.env.development.example` and `.env.production.example` (**DONE**)
+    - Rewrote README to present file import and bridge as equal first-class approaches (**DONE**)
+    - Updated all CLAUDE.md files with new framing (**DONE**)
